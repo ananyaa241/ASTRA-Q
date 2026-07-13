@@ -46,12 +46,12 @@ export default function AuditTrail({ entries }: Props) {
   };
 
   return (
-    <div className="glass-card" style={{ overflow: 'hidden' }}>
+    <div className="glass-card scroll-panel" style={{ maxHeight: 230 }}>
       {/* Header */}
       <div style={{
-        padding: '12px 18px', borderBottom: '1px solid var(--color-border)',
+        padding: '9px 16px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      }}>
+      }} className="scroll-panel__header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" strokeWidth="2">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -71,9 +71,10 @@ export default function AuditTrail({ entries }: Props) {
       {/* Column headers */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: '140px 140px 100px 120px 1fr 80px 72px',
-        gap: 8, padding: '6px 16px',
+        gridTemplateColumns: '120px 140px 90px 100px 1fr 70px 66px',
+        gap: 8, padding: '5px 14px',
         borderBottom: '1px solid var(--color-border)',
+        flexShrink: 0,
       }}>
         {['TIME', 'ACTION', 'ACTOR', 'TARGET', 'HASH / SIG', 'ALGO', 'VERIFY'].map(h => (
           <span key={h} className="section-label" style={{ fontSize: 9 }}>{h}</span>
@@ -81,7 +82,7 @@ export default function AuditTrail({ entries }: Props) {
       </div>
 
       {/* Rows */}
-      <div style={{ maxHeight: 220, overflowY: 'auto' }}>
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
         <AnimatePresence initial={false}>
           {entries.map((entry, i) => {
             const isExpanded = expanded === entry.id;
@@ -99,8 +100,8 @@ export default function AuditTrail({ entries }: Props) {
                   onClick={() => setExpanded(isExpanded ? null : entry.id)}
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: '140px 140px 100px 120px 1fr 80px 72px',
-                    gap: 8, padding: '8px 16px', cursor: 'pointer',
+                    gridTemplateColumns: '120px 140px 90px 100px 1fr 70px 66px',
+                    gap: 8, padding: '7px 14px', cursor: 'pointer',
                     borderBottom: '1px solid rgba(34,211,238,0.03)',
                     background: isExpanded ? 'rgba(34,211,238,0.03)' : 'transparent',
                     transition: 'background 150ms',
@@ -108,7 +109,9 @@ export default function AuditTrail({ entries }: Props) {
                 >
                   {/* Timestamp */}
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--color-text-muted)' }}>
-                    {new Date(entry.created_at).toLocaleTimeString()}
+                    <span suppressHydrationWarning>
+                      {new Date(entry.created_at).toLocaleTimeString()}
+                    </span>
                   </span>
 
                   {/* Action */}

@@ -6,77 +6,75 @@ import { NODE_COLORS, TIER_COLORS } from '@/lib/types';
 
 interface Props {
   topology: GraphTopology;
-  width?: number;
-  height?: number;
 }
 
-export default function ThreatGraph({ topology, width = 800, height = 480 }: Props) {
-  const svgRef = useRef<SVGSVGElement>(null);
+export default function ThreatGraph({ topology }: Props) {
+  const svgRef       = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const cleanupRef   = useRef<(() => void) | undefined>(undefined);
 
   const draw = useCallback(() => {
-    if (!svgRef.current) return;
+    if (!svgRef.current || !containerRef.current) return undefined;
+
+    // Stop previous simulation / remove old tooltip
+    if (cleanupRef.current) {
+      cleanupRef.current();
+      cleanupRef.current = undefined;
+    }
+
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    const W = containerRef.current?.clientWidth || width;
-    const H = height;
+    const W = containerRef.current.clientWidth  || 600;
+    const H = containerRef.current.clientHeight || 400;
 
     svg.attr('width', W).attr('height', H);
 
-    // Defs: arrow markers and filters
+    // ─── Defs ──────────────────────────────────────────────────────
     const defs = svg.append('defs');
 
-    // Glow filter
-    const filter = defs.append('filter').attr('id', 'glow').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
-    filter.append('feGaussianBlur').attr('stdDeviation', '3').attr('result', 'coloredBlur');
-    const feMerge = filter.append('feMerge');
-    feMerge.append('feMergeNode').attr('in', 'coloredBlur');
-    feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
+    const glow = defs.append('filter').attr('id', 'node-glow')
+      .attr('x', '-40%').attr('y', '-40%').attr('width', '180%').attr('height', '180%');
+    glow.append('feGaussianBlur').attr('stdDeviation', '3').attr('result', 'blur');
+    const m1 = glow.append('feMerge');
+    m1.append('feMergeNode').attr('in', 'blur');
+    m1.append('feMergeNode').attr('in', 'SourceGraphic');
 
-    // Anomaly glow
-    const anomalyFilter = defs.append('filter').attr('id', 'anomaly-glow');
-    anomalyFilter.append('feGaussianBlur').attr('stdDeviation', '4').attr('result', 'coloredBlur');
-    const feMerge2 = anomalyFilter.append('feMerge');
-    feMerge2.append('feMergeNode').attr('in', 'coloredBlur');
-    feMerge2.append('feMergeNode').attr('in', 'SourceGraphic');
+    const anomGlow = defs.append('filter').attr('id', 'edge-glow');
+    anomGlow.append('feGaussianBlur').attr('stdDeviation', '3').attr('result', 'blur');
+    const m2 = anomGlow.append('feMerge');
+    m2.append('feMergeNode').attr('in', 'blur');
+    m2.append('feMergeNode').attr('in', 'SourceGraphic');
 
-    // Arrow marker
-    defs.append('marker')
-      .attr('id', 'arrow-normal')
-      .attr('viewBox', '0 -5 10 10')
-      .attr('refX', 20).attr('refY', 0)
-      .attr('markerWidth', 6).attr('markerHeight', 6)
-      .attr('orient', 'auto')
-      .append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', 'rgba(125,143,168,0.5)');
+    defs.append('marker').attr('id', 'arrow-normal')
+      .attr('viewBox', '0 -5 10 10').attr('refX', 20).attr('refY', 0)
+      .attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto')
+      .append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', 'rgba(125,143,168,0.4)');
 
-    defs.append('marker')
-      .attr('id', 'arrow-anomalous')
-      .attr('viewBox', '0 -5 10 10')
-      .attr('refX', 20).attr('refY', 0)
-      .attr('markerWidth', 6).attr('markerHeight', 6)
-      .attr('orient', 'auto')
+    defs.append('marker').attr('id', 'arrow-anomalous')
+      .attr('viewBox', '0 -5 10 10').attr('refX', 20).attr('refY', 0)
+      .attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto')
       .append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', '#ef4444');
 
-    // Deep background
+    // ─── Background ────────────────────────────────────────────────
     svg.append('rect').attr('width', W).attr('height', H).attr('fill', 'transparent');
 
     const g = svg.append('g');
 
-    // Zoom behavior
+    // ─── Zoom ──────────────────────────────────────────────────────
     const zoom = d3.zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.3, 3])
-      .on('zoom', (event) => g.attr('transform', event.transform));
+      .scaleExtent([0.25, 3.5])
+      .on('zoom', event => g.attr('transform', event.transform));
     svg.call(zoom);
 
-    // Clone nodes/edges for D3 mutation
+    // ─── Clone data ────────────────────────────────────────────────
     const nodes: GraphNode[] = topology.nodes.map(n => ({ ...n }));
-    const nodeIds = new Set(nodes.map(n => n.id));
+    const nodeSet = new Set(nodes.map(n => n.id));
     const edges: GraphEdge[] = topology.edges
       .filter(e => {
         const s = typeof e.source === 'string' ? e.source : (e.source as GraphNode).id;
         const t = typeof e.target === 'string' ? e.target : (e.target as GraphNode).id;
-        return nodeIds.has(s) && nodeIds.has(t);
+        return nodeSet.has(s) && nodeSet.has(t);
       })
       .map(e => ({
         ...e,
@@ -84,111 +82,94 @@ export default function ThreatGraph({ topology, width = 800, height = 480 }: Pro
         target: typeof e.target === 'string' ? e.target : (e.target as GraphNode).id,
       }));
 
-    // Force simulation
+    // ─── Simulation ────────────────────────────────────────────────
     const simulation = d3.forceSimulation<GraphNode>(nodes)
       .force('link', d3.forceLink<GraphNode, GraphEdge>(edges)
         .id(d => d.id)
-        .distance(d => (d as GraphEdge).is_anomalous ? 80 : 120)
-        .strength(0.4))
-      .force('charge', d3.forceManyBody().strength(-280))
+        .distance(d => (d as GraphEdge).is_anomalous ? 70 : 110)
+        .strength(0.5))
+      .force('charge', d3.forceManyBody().strength(-260))
       .force('center', d3.forceCenter(W / 2, H / 2))
-      .force('collision', d3.forceCollide(22))
-      .force('x', d3.forceX(W / 2).strength(0.04))
-      .force('y', d3.forceY(H / 2).strength(0.04));
+      .force('collision', d3.forceCollide(20))
+      .force('x', d3.forceX(W / 2).strength(0.05))
+      .force('y', d3.forceY(H / 2).strength(0.05));
 
-    // Edges
+    // ─── Edges ─────────────────────────────────────────────────────
     const link = g.append('g').attr('class', 'links').selectAll('line')
-      .data(edges)
-      .join('line')
-      .attr('stroke', d => d.is_anomalous ? '#ef4444' : 'rgba(125,143,168,0.25)')
-      .attr('stroke-width', d => d.is_anomalous ? 2 : 1)
+      .data(edges).join('line')
+      .attr('stroke', d => d.is_anomalous ? '#ef4444' : 'rgba(125,143,168,0.22)')
+      .attr('stroke-width', d => d.is_anomalous ? 1.8 : 1)
       .attr('stroke-dasharray', d => d.type === 'emailed' ? '4,3' : 'none')
       .attr('marker-end', d => `url(#arrow-${d.is_anomalous ? 'anomalous' : 'normal'})`)
-      .attr('filter', d => d.is_anomalous ? 'url(#anomaly-glow)' : 'none')
-      .style('opacity', d => d.is_anomalous ? 1 : 0.5);
+      .attr('filter', d => d.is_anomalous ? 'url(#edge-glow)' : 'none')
+      .style('opacity', d => d.is_anomalous ? 0.9 : 0.45);
 
-    // Node groups
+    // ─── Node groups ───────────────────────────────────────────────
     const node = g.append('g').attr('class', 'nodes').selectAll('g')
-      .data(nodes)
-      .join('g')
+      .data(nodes).join('g')
       .attr('cursor', 'pointer')
       .call(
         d3.drag<SVGGElement, GraphNode>()
-          .on('start', (event, d) => {
-            if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x; d.fy = d.y;
-          })
-          .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y; })
-          .on('end', (event, d) => {
-            if (!event.active) simulation.alphaTarget(0);
-            d.fx = null; d.fy = null;
-          }) as never
+          .on('start', (event, d) => { if (!event.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+          .on('drag',  (event, d) => { d.fx = event.x; d.fy = event.y; })
+          .on('end',   (event, d) => { if (!event.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }) as never
       );
 
-    // Node circles
-    const nodeRadius = (d: GraphNode) =>
-      d.type === 'USER' ? (14 + d.threat_score * 10) : d.type === 'PC' ? 10 : 8;
+    const nodeR = (d: GraphNode) =>
+      d.type === 'USER' ? (13 + d.threat_score * 9) : d.type === 'PC' ? 9 : 7;
 
+    // Circle fill
     node.append('circle')
-      .attr('r', nodeRadius)
-      .attr('fill', d => {
-        const base = NODE_COLORS[d.type];
-        return d.threat_score > 0.65 ? TIER_COLORS[d.risk_tier].text : base;
-      })
-      .attr('fill-opacity', d => 0.15 + d.threat_score * 0.25)
+      .attr('r', nodeR)
+      .attr('fill', d => d.threat_score > 0.65 ? TIER_COLORS[d.risk_tier].text : NODE_COLORS[d.type])
+      .attr('fill-opacity', d => 0.13 + d.threat_score * 0.22)
       .attr('stroke', d => {
         if (d.threat_score > 0.85) return '#ef4444';
         if (d.threat_score > 0.65) return '#f97316';
         return NODE_COLORS[d.type];
       })
-      .attr('stroke-width', d => d.threat_score > 0.65 ? 2 : 1.5)
-      .attr('filter', d => d.threat_score > 0.5 ? 'url(#glow)' : 'none');
+      .attr('stroke-width', d => d.threat_score > 0.65 ? 1.8 : 1.5)
+      .attr('filter', d => d.threat_score > 0.5 ? 'url(#node-glow)' : 'none');
 
-    // Threat score ring for high-risk users
+    // Threat arc ring on high-risk users
     node.filter(d => d.type === 'USER' && d.threat_score > 0.4)
       .append('circle')
-      .attr('r', d => nodeRadius(d) + 5)
+      .attr('r', d => nodeR(d) + 5)
       .attr('fill', 'none')
       .attr('stroke', d => TIER_COLORS[d.risk_tier].text)
       .attr('stroke-width', 1)
       .attr('stroke-dasharray', d => {
-        const r = nodeRadius(d) + 5;
-        const circ = 2 * Math.PI * r;
-        const filled = circ * d.threat_score;
-        return `${filled} ${circ - filled}`;
+        const r = nodeR(d) + 5;
+        const c = 2 * Math.PI * r;
+        return `${c * d.threat_score} ${c * (1 - d.threat_score)}`;
       })
-      .attr('stroke-dashoffset', d => {
-        const r = nodeRadius(d) + 5;
-        return 2 * Math.PI * r * 0.25;
-      })
-      .attr('opacity', 0.6)
-      .style('transform-origin', 'center');
+      .attr('stroke-dashoffset', d => 2 * Math.PI * (nodeR(d) + 5) * 0.25)
+      .attr('opacity', 0.55);
 
-    // Node icons (shapes for type differentiation)
+    // Icon
     node.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('dominant-baseline', 'central')
-      .attr('font-size', d => d.type === 'USER' ? 10 : 8)
+      .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
+      .attr('font-size', d => d.type === 'USER' ? 9 : 7)
       .attr('fill', d => NODE_COLORS[d.type])
       .attr('pointer-events', 'none')
       .text(d => d.type === 'USER' ? '◈' : d.type === 'PC' ? '▣' : '◆');
 
-    // Labels
+    // Label
     node.append('text')
       .attr('text-anchor', 'middle')
-      .attr('y', d => nodeRadius(d) + 12)
-      .attr('font-size', 9)
+      .attr('y', d => nodeR(d) + 11)
+      .attr('font-size', 8)
       .attr('fill', d => d.threat_score > 0.65 ? TIER_COLORS[d.risk_tier].text : 'var(--color-text-secondary)')
       .attr('font-family', 'JetBrains Mono, monospace')
       .attr('pointer-events', 'none')
       .text(d => d.label);
 
-    // Tooltip
+    // ─── Tooltip ───────────────────────────────────────────────────
     const tooltip = d3.select(containerRef.current)
       .append('div')
       .style('position', 'absolute')
-      .style('background', 'rgba(13,20,36,0.95)')
-      .style('border', '1px solid rgba(34,211,238,0.3)')
+      .style('background', 'rgba(13,20,36,0.96)')
+      .style('border', '1px solid rgba(34,211,238,0.25)')
       .style('border-radius', '8px')
       .style('padding', '10px 14px')
       .style('font-family', 'JetBrains Mono, monospace')
@@ -196,74 +177,82 @@ export default function ThreatGraph({ topology, width = 800, height = 480 }: Pro
       .style('color', '#e2e8f0')
       .style('pointer-events', 'none')
       .style('opacity', '0')
-      .style('transition', 'opacity 150ms')
+      .style('transition', 'opacity 120ms')
       .style('z-index', '100')
-      .style('max-width', '220px');
+      .style('max-width', '200px')
+      .style('box-shadow', '0 4px 24px rgba(0,0,0,0.5)');
 
-    node.on('mouseover', (event, d) => {
-      const tierColor = TIER_COLORS[d.risk_tier].text;
-      tooltip
-        .style('opacity', '1')
-        .html(`
-          <div style="color:${tierColor};font-weight:700;margin-bottom:6px">${d.label}</div>
-          <div style="color:var(--color-text-secondary)">Type: ${d.type}</div>
-          <div style="color:var(--color-text-secondary)">Threat: 
-            <span style="color:${tierColor}">${(d.threat_score * 100).toFixed(1)}%</span>
-          </div>
-          <div style="color:var(--color-text-secondary)">Tier: 
-            <span style="color:${tierColor}">${d.risk_tier}</span>
-          </div>
+    node
+      .on('mouseover', (event, d) => {
+        const c = TIER_COLORS[d.risk_tier].text;
+        tooltip.style('opacity', '1').html(`
+          <div style="color:${c};font-weight:700;margin-bottom:5px">${d.label}</div>
+          <div style="color:#7d8fa8">Type: <span style="color:#e2e8f0">${d.type}</span></div>
+          <div style="color:#7d8fa8">Threat: <span style="color:${c}">${(d.threat_score * 100).toFixed(1)}%</span></div>
+          <div style="color:#7d8fa8">Tier: <span style="color:${c}">${d.risk_tier}</span></div>
         `);
-    })
-    .on('mousemove', (event) => {
-      const rect = containerRef.current!.getBoundingClientRect();
-      tooltip
-        .style('left', `${event.clientX - rect.left + 12}px`)
-        .style('top', `${event.clientY - rect.top - 10}px`);
-    })
-    .on('mouseout', () => tooltip.style('opacity', '0'));
+      })
+      .on('mousemove', event => {
+        const rect = containerRef.current!.getBoundingClientRect();
+        tooltip
+          .style('left', `${event.clientX - rect.left + 14}px`)
+          .style('top',  `${event.clientY - rect.top  - 10}px`);
+      })
+      .on('mouseout', () => tooltip.style('opacity', '0'));
 
-    // Tick
+    // ─── Tick ──────────────────────────────────────────────────────
     simulation.on('tick', () => {
       link
         .attr('x1', d => (d.source as GraphNode).x ?? 0)
         .attr('y1', d => (d.source as GraphNode).y ?? 0)
         .attr('x2', d => (d.target as GraphNode).x ?? 0)
         .attr('y2', d => (d.target as GraphNode).y ?? 0);
-
       node.attr('transform', d => `translate(${d.x ?? 0},${d.y ?? 0})`);
     });
 
-    // Fit to view after settle
+    // Auto-fit after settle
     simulation.on('end', () => {
-      const bounds = (g.node() as SVGGElement).getBBox();
-      if (bounds.width > 0 && bounds.height > 0) {
-        const scale = Math.min(
-          0.9 * W / bounds.width,
-          0.9 * H / bounds.height,
-          1.4
-        );
-        const tx = W / 2 - scale * (bounds.x + bounds.width / 2);
-        const ty = H / 2 - scale * (bounds.y + bounds.height / 2);
+      const b = (g.node() as SVGGElement).getBBox();
+      if (b.width > 0 && b.height > 0) {
+        const scale = Math.min(0.88 * W / b.width, 0.88 * H / b.height, 1.5);
+        const tx = W / 2 - scale * (b.x + b.width  / 2);
+        const ty = H / 2 - scale * (b.y + b.height / 2);
         svg.transition().duration(600)
           .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
       }
     });
 
-    return () => {
+    // Return cleanup
+    const destroy = () => {
       simulation.stop();
       tooltip.remove();
     };
-  }, [topology, width, height]);
+    cleanupRef.current = destroy;
+    return destroy;
+  }, [topology]);
 
+  // ResizeObserver: redraw whenever the container changes size
   useEffect(() => {
-    const cleanup = draw();
-    return cleanup;
+    if (!containerRef.current) return;
+
+    const ro = new ResizeObserver(() => { draw(); });
+    ro.observe(containerRef.current);
+
+    // Initial draw
+    draw();
+
+    return () => {
+      ro.disconnect();
+      if (cleanupRef.current) cleanupRef.current();
+    };
   }, [draw]);
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height, position: 'relative' }}>
-      <svg ref={svgRef} style={{ width: '100%', height }} />
+    <div
+      ref={containerRef}
+      style={{ width: '100%', height: '100%', position: 'relative' }}
+    >
+      <svg ref={svgRef} style={{ width: '100%', height: '100%', display: 'block' }} />
     </div>
   );
 }

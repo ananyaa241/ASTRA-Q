@@ -36,12 +36,12 @@ export default function ThreatTable({ threats }: Props) {
   };
 
   return (
-    <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 520 }}>
+    <div className="glass-card scroll-panel">
       {/* Header */}
       <div style={{
-        padding: '14px 16px', borderBottom: '1px solid var(--color-border)',
+        padding: '10px 14px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0,
-      }}>
+      }} className="scroll-panel__header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-cyan)" strokeWidth="2">
             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -82,8 +82,8 @@ export default function ThreatTable({ threats }: Props) {
 
       {/* Column headers */}
       <div style={{
-        display: 'grid', gridTemplateColumns: '80px 1fr 80px 88px 72px',
-        gap: 8, padding: '8px 14px',
+        display: 'grid', gridTemplateColumns: '80px 1fr 68px 80px 68px',
+        gap: 8, padding: '6px 14px',
         borderBottom: '1px solid var(--color-border)',
         flexShrink: 0,
       }}>
@@ -93,7 +93,7 @@ export default function ThreatTable({ threats }: Props) {
       </div>
 
       {/* Rows */}
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
         <AnimatePresence initial={false}>
           {filtered.map((t, i) => {
             const tc = TIER_COLORS[t.risk_tier];
@@ -109,8 +109,8 @@ export default function ThreatTable({ threats }: Props) {
                 transition={{ duration: 0.2, delay: i < 10 ? i * 0.03 : 0 }}
                 onClick={() => setSelected(isSelected ? null : t.session_id)}
                 style={{
-                  display: 'grid', gridTemplateColumns: '80px 1fr 80px 88px 72px',
-                  gap: 8, padding: '10px 14px', cursor: 'pointer',
+                  display: 'grid', gridTemplateColumns: '80px 1fr 68px 80px 68px',
+                  gap: 8, padding: '9px 14px', cursor: 'pointer',
                   borderBottom: '1px solid rgba(34,211,238,0.04)',
                   background: isSelected ? 'rgba(34,211,238,0.04)' : isContained ? 'rgba(34,197,94,0.04)' : 'transparent',
                   transition: 'background 150ms',

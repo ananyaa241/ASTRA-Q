@@ -35,12 +35,12 @@ function KPICard({ label, value, sub, status = 'neutral', sparkline, delay = 0 }
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay }}
       style={{
-        flex: 1, minWidth: 120,
+        flex: 1, minWidth: 100,
         background: 'rgba(13,20,36,0.6)',
         backdropFilter: 'blur(12px)',
         border: `1px solid ${statusColor}22`,
-        borderRadius: 10, padding: '12px 16px',
-        display: 'flex', flexDirection: 'column', gap: 4,
+        borderRadius: 8, padding: '8px 12px',
+        display: 'flex', flexDirection: 'column', gap: 2,
         transition: 'box-shadow 300ms',
       }}
     >
@@ -48,9 +48,9 @@ function KPICard({ label, value, sub, status = 'neutral', sparkline, delay = 0 }
 
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, justifyContent: 'space-between' }}>
         <span style={{
-          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 22,
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 18,
           color: statusColor, lineHeight: 1,
-          textShadow: `0 0 20px ${statusColor}55`,
+          textShadow: `0 0 16px ${statusColor}44`,
         }}>
           {value}
         </span>
@@ -89,7 +89,7 @@ function KPICard({ label, value, sub, status = 'neutral', sparkline, delay = 0 }
       )}
 
       {/* Status bar */}
-      <div style={{ height: 2, background: 'rgba(255,255,255,0.05)', borderRadius: 1, marginTop: 4 }}>
+      <div style={{ height: 2, background: 'rgba(255,255,255,0.05)', borderRadius: 1, marginTop: 2 }}>
         <div style={{
           height: '100%', borderRadius: 1,
           background: `linear-gradient(90deg, ${statusColor}44, ${statusColor})`,
@@ -123,11 +123,11 @@ export default function MetricBanner({ metrics, wsStatus }: Props) {
 
   return (
     <div style={{
-      padding: '10px 20px',
+      padding: '7px 16px',
       borderBottom: '1px solid var(--color-border)',
       background: 'rgba(7,11,20,0.6)',
     }}>
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'stretch' }}>
+      <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap', alignItems: 'stretch' }}>
         {/* P99 Inference Latency */}
         <KPICard
           label="P99 Inference Latency"

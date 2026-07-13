@@ -11,14 +11,14 @@ const POLL_INTERVAL_MS = 15_000;
 
 // ─── Synthetic demo data (shown when API is unavailable) ────────────
 const DEMO_THREATS: ThreatSession[] = [
-  { session_id: 'sess-001', user_id: 'ACM2278', fused_score: 0.94, gcn_score: 0.91, transformer_score: 0.96, risk_tier: 'CRITICAL', scenario_hints: ['After-hours Wikileaks upload', 'Removable device connected'], inference_latency_ms: 22.4, scored_at: new Date().toISOString(), pqc_signed: true },
-  { session_id: 'sess-002', user_id: 'PFM3190', fused_score: 0.81, gcn_score: 0.79, transformer_score: 0.83, risk_tier: 'HIGH', scenario_hints: ['Job search keywords + thumb drive exfil'], inference_latency_ms: 18.7, scored_at: new Date().toISOString(), pqc_signed: true },
-  { session_id: 'sess-003', user_id: 'TRM1456', fused_score: 0.77, gcn_score: 0.74, transformer_score: 0.79, risk_tier: 'HIGH', scenario_hints: ['Cross-machine login detected', 'Email exfiltration pattern'], inference_latency_ms: 19.1, scored_at: new Date().toISOString(), pqc_signed: true },
-  { session_id: 'sess-004', user_id: 'BEW0534', fused_score: 0.68, gcn_score: 0.65, transformer_score: 0.71, risk_tier: 'HIGH', scenario_hints: ['Dropbox uploads increasing'], inference_latency_ms: 21.3, scored_at: new Date().toISOString(), pqc_signed: true },
-  { session_id: 'sess-005', user_id: 'KLT2901', fused_score: 0.55, gcn_score: 0.52, transformer_score: 0.58, risk_tier: 'MEDIUM', scenario_hints: ['Suspicious file hex header (PE in .txt)'], inference_latency_ms: 16.9, scored_at: new Date().toISOString(), pqc_signed: false },
-  { session_id: 'sess-006', user_id: 'MNR0817', fused_score: 0.48, gcn_score: 0.45, transformer_score: 0.51, risk_tier: 'MEDIUM', scenario_hints: ['Weekend device connect spike'], inference_latency_ms: 17.8, scored_at: new Date().toISOString(), pqc_signed: true },
-  { session_id: 'sess-007', user_id: 'ZKP1123', fused_score: 0.32, gcn_score: 0.30, transformer_score: 0.34, risk_tier: 'LOW', scenario_hints: ['Baseline deviation: email count'], inference_latency_ms: 15.2, scored_at: new Date().toISOString(), pqc_signed: true },
-  { session_id: 'sess-008', user_id: 'WQV4472', fused_score: 0.21, gcn_score: 0.19, transformer_score: 0.23, risk_tier: 'LOW', scenario_hints: [], inference_latency_ms: 14.8, scored_at: new Date().toISOString(), pqc_signed: false },
+  { session_id: 'sess-001', user_id: 'ACM2278', fused_score: 0.94, gcn_score: 0.91, transformer_score: 0.96, risk_tier: 'CRITICAL', scenario_hints: ['After-hours Wikileaks upload', 'Removable device connected'], inference_latency_ms: 22.4, scored_at: '2026-07-13T18:01:00.000Z', pqc_signed: true },
+  { session_id: 'sess-002', user_id: 'PFM3190', fused_score: 0.81, gcn_score: 0.79, transformer_score: 0.83, risk_tier: 'HIGH', scenario_hints: ['Job search keywords + thumb drive exfil'], inference_latency_ms: 18.7, scored_at: '2026-07-13T17:59:00.000Z', pqc_signed: true },
+  { session_id: 'sess-003', user_id: 'TRM1456', fused_score: 0.77, gcn_score: 0.74, transformer_score: 0.79, risk_tier: 'HIGH', scenario_hints: ['Cross-machine login detected', 'Email exfiltration pattern'], inference_latency_ms: 19.1, scored_at: '2026-07-13T17:57:00.000Z', pqc_signed: true },
+  { session_id: 'sess-004', user_id: 'BEW0534', fused_score: 0.68, gcn_score: 0.65, transformer_score: 0.71, risk_tier: 'HIGH', scenario_hints: ['Dropbox uploads increasing'], inference_latency_ms: 21.3, scored_at: '2026-07-13T17:55:00.000Z', pqc_signed: true },
+  { session_id: 'sess-005', user_id: 'KLT2901', fused_score: 0.55, gcn_score: 0.52, transformer_score: 0.58, risk_tier: 'MEDIUM', scenario_hints: ['Suspicious file hex header (PE in .txt)'], inference_latency_ms: 16.9, scored_at: '2026-07-13T17:53:00.000Z', pqc_signed: false },
+  { session_id: 'sess-006', user_id: 'MNR0817', fused_score: 0.48, gcn_score: 0.45, transformer_score: 0.51, risk_tier: 'MEDIUM', scenario_hints: ['Weekend device connect spike'], inference_latency_ms: 17.8, scored_at: '2026-07-13T17:51:00.000Z', pqc_signed: true },
+  { session_id: 'sess-007', user_id: 'ZKP1123', fused_score: 0.32, gcn_score: 0.30, transformer_score: 0.34, risk_tier: 'LOW', scenario_hints: ['Baseline deviation: email count'], inference_latency_ms: 15.2, scored_at: '2026-07-13T17:49:00.000Z', pqc_signed: true },
+  { session_id: 'sess-008', user_id: 'WQV4472', fused_score: 0.21, gcn_score: 0.19, transformer_score: 0.23, risk_tier: 'LOW', scenario_hints: [], inference_latency_ms: 14.8, scored_at: '2026-07-13T17:47:00.000Z', pqc_signed: false },
 ];
 
 const DEMO_STATS: ThreatStats = {
@@ -60,9 +60,9 @@ const DEMO_GRAPH: GraphTopology = {
 };
 
 const DEMO_AUDIT: AuditEntry[] = [
-  { id: 'a1', created_at: new Date(Date.now() - 60000).toISOString(), action_type: 'ALERT_GENERATED', actor: 'SYSTEM', target_user: 'ACM2278', target_session: 'sess-001', payload_hash: 'sha3:a1b2c3d4e5f6...', pqc_signature_preview: 'ML-DSA-87:4595B:AAAB...', signing_key_fingerprint: 'fp:22d3ee...', pqc_algorithm: 'ML-DSA-87', is_verified: true },
-  { id: 'a2', created_at: new Date(Date.now() - 120000).toISOString(), action_type: 'CONTAINMENT_TRIGGERED', actor: 'analyst_soc', target_user: 'PFM3190', target_session: 'sess-002', payload_hash: 'sha3:b2c3d4e5f6a1...', pqc_signature_preview: 'ML-DSA-87:4595B:BBBC...', signing_key_fingerprint: 'fp:f59e0b...', pqc_algorithm: 'ML-DSA-87', is_verified: true },
-  { id: 'a3', created_at: new Date(Date.now() - 300000).toISOString(), action_type: 'SYSTEM_START', actor: 'SYSTEM', payload_hash: 'sha3:c3d4e5f6a1b2...', pqc_signature_preview: 'ML-DSA-87:4595B:CCCD...', signing_key_fingerprint: 'fp:a5b4fc...', pqc_algorithm: 'ML-DSA-87', is_verified: true },
+  { id: 'a1', created_at: '2026-07-13T18:00:00.000Z', action_type: 'ALERT_GENERATED', actor: 'SYSTEM', target_user: 'ACM2278', target_session: 'sess-001', payload_hash: 'sha3:a1b2c3d4e5f6...', pqc_signature_preview: 'ML-DSA-87:4595B:AAAB...', signing_key_fingerprint: 'fp:22d3ee...', pqc_algorithm: 'ML-DSA-87', is_verified: true },
+  { id: 'a2', created_at: '2026-07-13T17:58:00.000Z', action_type: 'CONTAINMENT_TRIGGERED', actor: 'analyst_soc', target_user: 'PFM3190', target_session: 'sess-002', payload_hash: 'sha3:b2c3d4e5f6a1...', pqc_signature_preview: 'ML-DSA-87:4595B:BBBC...', signing_key_fingerprint: 'fp:f59e0b...', pqc_algorithm: 'ML-DSA-87', is_verified: true },
+  { id: 'a3', created_at: '2026-07-13T17:55:00.000Z', action_type: 'SYSTEM_START', actor: 'SYSTEM', payload_hash: 'sha3:c3d4e5f6a1b2...', pqc_signature_preview: 'ML-DSA-87:4595B:CCCD...', signing_key_fingerprint: 'fp:a5b4fc...', pqc_algorithm: 'ML-DSA-87', is_verified: true },
 ];
 
 // ────────────────────────────────────────────────────────────────────

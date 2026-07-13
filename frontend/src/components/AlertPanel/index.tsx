@@ -75,8 +75,8 @@ export default function AlertPanel({ alerts, onDismiss }: Props) {
                 </div>
               </div>
 
-              {/* Timestamp */}
-              <div style={{ fontSize: 9, color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', flexShrink: 0 }}>
+              <div style={{ fontSize: 9, color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', flexShrink: 0 }}
+                suppressHydrationWarning>
                 {new Date(alert.timestamp).toLocaleTimeString()}
               </div>
 
