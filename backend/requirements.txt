@@ -1,0 +1,56 @@
+# ─── Core ──────────────────────────────────────────────────────────
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+python-multipart==0.0.9
+pydantic==2.7.1
+pydantic-settings==2.2.1
+
+# ─── Database ──────────────────────────────────────────────────────
+sqlalchemy[asyncio]==2.0.30
+asyncpg==0.29.0
+psycopg2-binary==2.9.9
+
+# ─── Cache (Redis) ─────────────────────────────────────────────────
+redis[asyncio]==5.0.4
+
+# ─── Kafka ─────────────────────────────────────────────────────────
+kafka-python==2.0.2
+
+# ─── ML / AI Core ─────────────────────────────────────────────────
+torch>=2.2.0
+numpy>=1.26.0
+pandas>=2.2.0
+scikit-learn>=1.4.0
+
+# ─── PyTorch Geometric (Graph NN) ──────────────────────────────────
+# Install separately after torch is installed:
+# pip install torch_geometric
+# pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv \
+#     -f https://data.pyg.org/whl/torch-2.2.0+cpu.html
+torch_geometric>=2.5.0
+
+# ─── PQC (Post-Quantum Cryptography) ───────────────────────────────
+# liboqs-python requires liboqs compiled (see SETUP.md)
+# On systems where liboqs is unavailable, a labeled placeholder is used.
+# liboqs-python>=0.10.0     # Uncomment when liboqs is installed
+
+# ─── Crypto (for HMAC placeholder and hashing) ─────────────────────
+cryptography>=42.0.0
+
+# ─── Monitoring & Observability ────────────────────────────────────
+prometheus-client==0.20.0
+structlog==24.1.0
+
+# ─── Testing ───────────────────────────────────────────────────────
+pytest==8.2.0
+pytest-asyncio==0.23.6
+pytest-cov==5.0.0
+httpx==0.27.0
+anyio==4.3.0
+
+# ─── Dev / Utilities ───────────────────────────────────────────────
+python-dotenv==1.0.1
+click==8.1.7
+rich==13.7.1
+msgpack==1.0.8
+orjson==3.10.3

@@ -1,0 +1,75 @@
+# ─── Dataset (large files — never commit) ──────────────────────────
+dataset/r4.2/
+dataset/answers/
+*.csv
+*.csv.gz
+
+# ─── Trained Models (large binaries) ───────────────────────────────
+models/*.pt
+models/*.pth
+models/*.bin
+# Keep training reports
+!models/training_report.json
+
+# ─── PQC Keys (NEVER commit private keys) ──────────────────────────
+pqc_keys/
+*.bin
+*_sk.bin
+*_vk.bin
+
+# ─── Python virtual environment ─────────────────────────────────────
+backend/.venv/
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# ─── Test/Coverage artifacts ────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+*.log
+
+# ─── Environment files (contain secrets) ────────────────────────────
+.env
+backend/.env
+frontend/.env.local
+# Keep the template
+!.env.example
+
+# ─── Node.js / Next.js ──────────────────────────────────────────────
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.cache/
+
+# ─── Docker ─────────────────────────────────────────────────────────
+*.pid
+
+# ─── OS cruft ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── IDE ────────────────────────────────────────────────────────────
+.idea/
+.vscode/settings.json
+*.suo
+*.user
+
+# ─── Jupyter ────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ─── Misc ───────────────────────────────────────────────────────────
+*.tmp
+*.swp
+*.bak
