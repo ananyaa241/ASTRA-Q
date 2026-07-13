@@ -11,17 +11,21 @@ interface Props {
 }
 
 export default function AlertPanel({ alerts, onDismiss }: Props) {
-  const alertList = alerts.filter(a => a.type === 'alert') as AlertMsg[];
+  // Preserve original index for correct dismiss targeting
+  const alertList: Array<{ msg: AlertMsg; originalIdx: number }> = alerts
+    .map((a, i) => ({ msg: a as AlertMsg, originalIdx: i }))
+    .filter(({ msg }) => msg.type === 'alert');
+
   if (alertList.length === 0) return null;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
       <AnimatePresence initial={false}>
-        {alertList.slice(0, 5).map((alert, i) => {
+        {alertList.slice(0, 5).map(({ msg: alert, originalIdx }) => {
           const tc = TIER_COLORS[alert.severity];
           return (
             <motion.div
-              key={`${alert.session_id}-${i}`}
+              key={`${alert.session_id}-${originalIdx}`}
               initial={{ opacity: 0, y: -12, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, x: 24, scale: 0.96 }}
@@ -30,13 +34,13 @@ export default function AlertPanel({ alerts, onDismiss }: Props) {
                 display: 'flex', alignItems: 'center', gap: 12,
                 padding: '10px 16px', borderRadius: 10,
                 background: tc.bg,
-                border: `1px solid ${tc.border}44`,
+                border: `1px solid ${tc.border}`,
                 boxShadow: alert.severity === 'CRITICAL' ? tc.glow : 'none',
               }}
             >
               {/* Severity icon */}
               <div style={{ flexShrink: 0, width: 28, height: 28, borderRadius: 8,
-                background: `${tc.text}15`, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: `${tc.bg}`, display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 {alert.severity === 'CRITICAL' ? (
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={tc.text} strokeWidth="2.5">
@@ -76,13 +80,15 @@ export default function AlertPanel({ alerts, onDismiss }: Props) {
                 {new Date(alert.timestamp).toLocaleTimeString()}
               </div>
 
-              {/* Dismiss */}
-              <button onClick={() => onDismiss(alerts.indexOf(alert))}
+              {/* Dismiss — uses original index for correct splice */}
+              <button
+                onClick={() => onDismiss(originalIdx)}
+                aria-label="Dismiss alert"
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
-                  color: 'var(--color-text-muted)', fontSize: 16, flexShrink: 0,
-                  display: 'flex', alignItems: 'center', padding: 4, borderRadius: 4,
-                  transition: 'color 150ms',
+                  color: 'var(--color-text-muted)', fontSize: 18, lineHeight: 1,
+                  flexShrink: 0, display: 'flex', alignItems: 'center',
+                  padding: 4, borderRadius: 4, transition: 'color 150ms',
                 }}
                 onMouseOver={e => (e.currentTarget.style.color = 'var(--color-text-primary)')}
                 onMouseOut={e => (e.currentTarget.style.color = 'var(--color-text-muted)')}>
@@ -95,7 +101,7 @@ export default function AlertPanel({ alerts, onDismiss }: Props) {
 
       {alertList.length > 5 && (
         <div style={{ fontSize: 11, color: 'var(--color-text-muted)', textAlign: 'center', padding: '4px 0' }}>
-          + {alertList.length - 5} more alerts
+          + {alertList.length - 5} more alert{alertList.length - 5 !== 1 ? 's' : ''}
         </div>
       )}
     </div>

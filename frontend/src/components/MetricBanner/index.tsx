@@ -189,8 +189,18 @@ export default function MetricBanner({ metrics, wsStatus }: Props) {
           }}>
           <div className="section-label" style={{ fontSize: 9 }}>STREAM</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span className={`status-dot ${wsStatus === 'connected' ? 'live' : 'disconnected'}`} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: wsStatus === 'connected' ? '#22c55e' : '#f97316', fontWeight: 600 }}>
+            <span className={`status-dot ${
+              wsStatus === 'connected'  ? 'live'         :
+              wsStatus === 'connecting' ? 'connecting'   :
+              wsStatus === 'error'      ? 'error'        :
+              'disconnected'
+            }`} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12,
+              color: wsStatus === 'connected'  ? '#22c55e'
+                   : wsStatus === 'connecting' ? '#eab308'
+                   : wsStatus === 'error'      ? '#ef4444'
+                   : '#f97316',
+              fontWeight: 600 }}>
               {wsStatus === 'connected' ? 'LIVE' : wsStatus.toUpperCase()}
             </span>
           </div>

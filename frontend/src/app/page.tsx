@@ -12,16 +12,18 @@ const ThreatGraph = dynamic(() => import('@/components/ThreatGraph'), { ssr: fal
 export default function DashboardPage() {
   const {
     threats, stats, graph, auditEntries,
-    alerts, metrics, loading, error, wsStatus, dismissAlert,
+    alerts, metrics, loading, wsStatus, usingDemo, dismissAlert,
   } = useThreatData();
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+
       {/* ── Top Navigation Bar ───────────────────────────────────── */}
       <header style={{
         position: 'sticky', top: 0, zIndex: 50,
         background: 'rgba(7, 11, 20, 0.92)',
         backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(34,211,238,0.1)',
         padding: '0 24px',
         height: 56,
@@ -35,6 +37,7 @@ export default function DashboardPage() {
             borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 16, fontWeight: 700, color: '#fff', letterSpacing: '-0.5px',
             boxShadow: '0 0 20px rgba(34,211,238,0.4)',
+            flexShrink: 0,
           }}>Æ</div>
           <span style={{
             fontWeight: 700, fontSize: 16, letterSpacing: '-0.3px',
@@ -44,7 +47,7 @@ export default function DashboardPage() {
           <span style={{
             fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--color-text-muted)',
             padding: '2px 8px', border: '1px solid rgba(34,211,238,0.15)',
-            borderRadius: 4, marginLeft: 4, letterSpacing: '0.1em',
+            borderRadius: 4, marginLeft: 4, letterSpacing: '0.1em', flexShrink: 0,
           }}>v1.0.0 · CERT r4.2</span>
         </div>
 
@@ -52,7 +55,14 @@ export default function DashboardPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           {/* WS Status */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span className={`status-dot ${wsStatus === 'connected' ? 'live' : wsStatus === 'error' ? 'error' : 'disconnected'}`} />
+            <span
+              className={`status-dot ${
+                wsStatus === 'connected'   ? 'live'         :
+                wsStatus === 'connecting'  ? 'connecting'   :
+                wsStatus === 'error'       ? 'error'        :
+                'disconnected'
+              }`}
+            />
             <span style={{ fontSize: 11, color: 'var(--color-text-secondary)', fontFamily: 'var(--font-mono)' }}>
               {wsStatus.toUpperCase()}
             </span>
@@ -74,7 +84,7 @@ export default function DashboardPage() {
             </span>
           </div>
 
-          {/* Threat counts */}
+          {/* Threat tier counts */}
           {stats && (
             <div style={{ display: 'flex', gap: 12 }}>
               {stats.tiers.map(t => (
@@ -82,8 +92,8 @@ export default function DashboardPage() {
                   <div style={{
                     fontSize: 15, fontWeight: 700, fontFamily: 'var(--font-mono)',
                     color: t.tier === 'CRITICAL' ? 'var(--color-critical)'
-                         : t.tier === 'HIGH' ? 'var(--color-high)'
-                         : t.tier === 'MEDIUM' ? 'var(--color-medium)'
+                         : t.tier === 'HIGH'     ? 'var(--color-high)'
+                         : t.tier === 'MEDIUM'   ? 'var(--color-medium)'
                          : 'var(--color-low)',
                   }}>{t.count}</div>
                   <div style={{ fontSize: 9, color: 'var(--color-text-muted)', letterSpacing: '0.08em' }}>{t.tier}</div>
@@ -97,63 +107,93 @@ export default function DashboardPage() {
       {/* ── Metric Banner ─────────────────────────────────────────── */}
       <MetricBanner metrics={metrics} wsStatus={wsStatus} />
 
-      {/* ── Loading / Error States ────────────────────────────────── */}
+      {/* ── Demo mode banner ──────────────────────────────────────── */}
+      {usingDemo && (
+        <div style={{
+          margin: '8px 20px 0',
+          padding: '8px 16px',
+          background: 'rgba(234,179,8,0.08)',
+          border: '1px solid rgba(234,179,8,0.25)',
+          borderRadius: 8,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          fontSize: 12,
+          color: 'var(--color-medium)',
+          fontFamily: 'var(--font-mono)',
+        }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          DEMO MODE — Backend offline. Showing synthetic CERT r4.2 data. Start Docker to connect live data.
+        </div>
+      )}
+
+      {/* ── Loading overlay ────────────────────────────────────────── */}
       {loading && (
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 300 }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{
               width: 48, height: 48,
-              border: '2px solid rgba(34,211,238,0.2)',
+              border: '2px solid rgba(34,211,238,0.15)',
               borderTopColor: 'var(--color-cyan)',
               borderRadius: '50%',
               animation: 'spin 0.8s linear infinite',
               margin: '0 auto 16px',
             }} />
-            <p style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-mono)' }}>
+            <p style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-mono)', fontSize: 13 }}>
               Connecting to Aegis-Q...
             </p>
           </div>
         </div>
       )}
 
+      {/* ── Main Dashboard ─────────────────────────────────────────── */}
       {!loading && (
         <main style={{ flex: 1, padding: '16px 20px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {/* ── Alert Panel ─────────────────────────────────────── */}
+
+          {/* Alert Panel */}
           {alerts.length > 0 && (
             <AlertPanel alerts={alerts} onDismiss={dismissAlert} />
           )}
 
-          {/* ── Main Grid: Graph (left) + Table (right) ────────── */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 420px',
-            gap: 16,
-            flex: 1,
-            minHeight: 0,
-          }}>
-            {/* Threat Graph */}
+          {/* Main Grid: Graph + Table */}
+          <div
+            className="dashboard-grid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 420px',
+              gap: 16,
+              flex: 1,
+              minHeight: 0,
+            }}
+          >
+            {/* Entity Graph */}
             <div className="glass-card" style={{ overflow: 'hidden', minHeight: 520 }}>
               <div style={{
-                padding: '14px 18px', borderBottom: '1px solid var(--color-border)',
+                padding: '14px 18px',
+                borderBottom: '1px solid var(--color-border)',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                flexWrap: 'wrap', gap: 8,
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-cyan)" strokeWidth="2">
-                    <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
                   </svg>
                   <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--color-text-primary)' }}>
                     Entity Relationship Graph
                   </span>
                 </div>
                 {graph && (
-                  <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
                     {[
                       { label: 'Users', color: '#22d3ee' },
-                      { label: 'PCs', color: '#f59e0b' },
+                      { label: 'PCs',   color: '#f59e0b' },
                       { label: 'Files', color: '#f43f5e' },
                     ].map(item => (
                       <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: item.color }} />
+                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: item.color, flexShrink: 0 }} />
                         <span style={{ fontSize: 11, color: 'var(--color-text-secondary)' }}>{item.label}</span>
                       </div>
                     ))}
@@ -166,8 +206,11 @@ export default function DashboardPage() {
               {graph ? (
                 <ThreatGraph topology={graph} />
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 460, color: 'var(--color-text-muted)' }}>
-                  Loading graph...
+                <div className="empty-state" style={{ minHeight: 460 }}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  <p>Graph data unavailable</p>
                 </div>
               )}
             </div>
@@ -176,16 +219,10 @@ export default function DashboardPage() {
             <ThreatTable threats={threats} />
           </div>
 
-          {/* ── Audit Trail ──────────────────────────────────────── */}
+          {/* Audit Trail */}
           <AuditTrail entries={auditEntries} />
         </main>
       )}
-
-      <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }

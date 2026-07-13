@@ -21,12 +21,16 @@
   /* Risk tiers */
   --color-critical:       #ef4444;
   --color-critical-bg:    rgba(239, 68, 68, 0.12);
+  --color-critical-border:rgba(239, 68, 68, 0.45);
   --color-high:           #f97316;
   --color-high-bg:        rgba(249, 115, 22, 0.12);
+  --color-high-border:    rgba(249, 115, 22, 0.45);
   --color-medium:         #eab308;
   --color-medium-bg:      rgba(234, 179, 8, 0.10);
+  --color-medium-border:  rgba(234, 179, 8, 0.40);
   --color-low:            #22c55e;
   --color-low-bg:         rgba(34, 197, 94, 0.08);
+  --color-low-border:     rgba(34, 197, 94, 0.35);
 
   /* Text */
   --color-text-primary:   #e2e8f0;
@@ -152,7 +156,7 @@ body::after {
 .badge-critical {
   background: var(--color-critical-bg);
   color: var(--color-critical);
-  border-color: var(--color-critical);
+  border-color: var(--color-critical-border);
   box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
   animation: pulse-critical 2s ease-in-out infinite;
 }
@@ -160,19 +164,19 @@ body::after {
 .badge-high {
   background: var(--color-high-bg);
   color: var(--color-high);
-  border-color: var(--color-high);
+  border-color: var(--color-high-border);
 }
 
 .badge-medium {
   background: var(--color-medium-bg);
   color: var(--color-medium);
-  border-color: var(--color-medium);
+  border-color: var(--color-medium-border);
 }
 
 .badge-low {
   background: var(--color-low-bg);
   color: var(--color-low);
-  border-color: var(--color-low);
+  border-color: var(--color-low-border);
 }
 
 /* ─── Score Bar ──────────────────────────────────────────────────── */
@@ -253,6 +257,15 @@ body::after {
   50% { box-shadow: 0 0 24px rgba(239, 68, 68, 0.55); }
 }
 
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.25); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 @keyframes scanline {
   0% { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }
@@ -312,7 +325,35 @@ body::after {
   height: 8px;
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
 }
-.status-dot.live { background: var(--color-low); animation: pulse-critical 1.5s infinite; }
+/* Fix: live dot uses background-color animation, not box-shadow */
+.status-dot.live {
+  background: var(--color-low);
+  animation: pulse-live 1.5s ease-in-out infinite;
+}
 .status-dot.disconnected { background: var(--color-high); }
-.status-dot.error { background: var(--color-critical); }
+.status-dot.connecting   { background: var(--color-medium); animation: blink 1s step-end infinite; }
+.status-dot.error        { background: var(--color-critical); }
+
+/* ─── Empty State ────────────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.empty-state svg { opacity: 0.3; }
+.empty-state p   { font-size: 13px; line-height: 1.5; }
+
+/* ─── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
