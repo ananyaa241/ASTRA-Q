@@ -46,18 +46,12 @@ export default function DashboardPage() {
       }}>
         {/* Logo cluster */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-          <div style={{
-            width: 30, height: 30,
-            background: 'linear-gradient(135deg, #22d3ee 0%, #6366f1 100%)',
-            borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 15, fontWeight: 700, color: '#fff',
-            boxShadow: '0 0 18px rgba(34,211,238,0.4)',
-          }}>Æ</div>
+          <img src="/logo.png" alt="ASTRA-Q Logo" style={{ width: 30, height: 30, borderRadius: 7, boxShadow: '0 0 18px rgba(34,211,238,0.4)' }} />
           <span style={{
             fontWeight: 700, fontSize: 15, letterSpacing: '-0.3px',
             background: 'linear-gradient(90deg, #22d3ee, #a5b4fc)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-          }}>AEGIS-Q</span>
+          }}>ASTRA-Q</span>
           <span style={{
             fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--color-text-muted)',
             padding: '2px 7px', border: '1px solid rgba(34,211,238,0.15)',
@@ -169,7 +163,7 @@ export default function DashboardPage() {
               margin: '0 auto 14px',
             }} />
             <p style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
-              Connecting to Aegis-Q...
+              Connecting to ASTRA-Q...
             </p>
           </div>
         </div>

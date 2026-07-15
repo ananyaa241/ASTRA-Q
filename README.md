@@ -1,8 +1,8 @@
-# 🛡️ Project Aegis-Q
+# <img src="./src/logo.png" width="30" height="30" style="border-radius: 7px; vertical-align: middle;"> Project ASTRA-Q
+**Advanced Security Threat Response Architecture – Quantum**
 
-**Quantum-Hardened Insider Threat Detection Platform**
+> *AI-Powered Quantum-Resilient Platform for Insider Threat Detection and Privileged Access Security.*
 
-> *Real-time behavioral AI + post-quantum cryptography, built entirely on free/open-source technology.*
 
 [![Python](https://img.shields.io/badge/Python-3.11-blue)](https://python.org)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org)

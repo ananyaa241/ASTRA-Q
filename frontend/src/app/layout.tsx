@@ -2,14 +2,14 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Aegis-Q | Quantum-Hardened Insider Threat Detection',
+  title: 'ASTRA-Q | Advanced Security Threat Response Architecture – Quantum',
   description:
-    'Real-time AI-powered SOC dashboard with post-quantum cryptographic audit trail. Dual-engine HeteroGCN + Transformer threat detection on CERT r4.2.',
+    'AI-Powered Quantum-Resilient Platform for Insider Threat Detection and Privileged Access Security.',
   keywords: ['SOC', 'insider threat', 'cybersecurity', 'post-quantum', 'ML-KEM', 'ML-DSA', 'AI security'],
-  authors: [{ name: 'Aegis-Q Team' }],
+  authors: [{ name: 'ASTRA-Q Team' }],
   openGraph: {
-    title: 'Aegis-Q SOC Dashboard',
-    description: 'Quantum-Hardened Insider Threat Detection Platform',
+    title: 'ASTRA-Q SOC Dashboard',
+    description: 'AI-Powered Quantum-Resilient Platform for Insider Threat Detection and Privileged Access Security.',
     type: 'website',
   },
 };
@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="theme-color" content="#070b14" />
         <link
           rel="icon"
-          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>"
+          href="/logo.png"
         />
       </head>
       <body

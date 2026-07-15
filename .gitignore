@@ -73,3 +73,7 @@ desktop.ini
 *.tmp
 *.swp
 *.bak
+
+
+create_docx.py
+outcome.docx
