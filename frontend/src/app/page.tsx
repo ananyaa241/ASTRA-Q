@@ -46,6 +46,7 @@ export default function LandingPage() {
         <button
           onClick={() => router.push('/access')}
           style={{
+            marginLeft: '32px',
             padding: '10px 24px', background: 'transparent', border: '1px solid rgba(0,0,0,0.15)',
             borderRadius: 8, color: '#0f172a', fontWeight: 600, fontSize: 14, cursor: 'pointer',
             boxShadow: '0 2px 10px rgba(0,0,0,0.02)'
