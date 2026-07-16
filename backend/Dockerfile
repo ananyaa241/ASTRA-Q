@@ -26,8 +26,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 RUN pip install --no-cache-dir torch_geometric || true
 
 # Optional: Build liboqs for real PQC (skip if CMake not available)
-RUN pip install --no-cache-dir liboqs-python || \
-    echo "WARNING: liboqs-python not installed — using placeholder PQC"
+# Avoid installing it in the container image because the environment may not
+# have network access to the upstream liboqs repository.
+RUN pip uninstall -y liboqs-python || true
 
 # Copy source
 COPY . /app/backend

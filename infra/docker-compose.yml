@@ -147,7 +147,7 @@ services:
       REDIS_URL: redis://redis:6379
       DATABASE_URL: postgresql+asyncpg://aegis:aegis_secret@postgres:5432/aegisq
       DATASET_PATH: /app/dataset
-      PQC_MODE: liboqs
+      PQC_MODE: placeholder
       LOG_LEVEL: INFO
     volumes:
       - ../dataset:/app/dataset:ro
@@ -177,8 +177,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
-      NEXT_PUBLIC_WS_URL: ws://localhost:8000
+      NEXT_PUBLIC_API_URL: http://backend:8000
+      NEXT_PUBLIC_WS_URL: ws://backend:8000
     depends_on:
       backend:
         condition: service_healthy
