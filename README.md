@@ -53,29 +53,127 @@ The repository is modularly containerized into distinct core environments:
 ```
 astra-q/
 │
-├── frontend/                 # Interactive Control Center (Next.js 14)
-│   ├── src/
-│   │   ├── app/              # App router & Page architectures (Dashboard, Reports)
-│   │   ├── components/       # Monolythic UI components (ThreatCards, Graph visualizers)
-│   │   ├── hooks/            # WebSocket and ThreatData custom hooks
-│   │   └── context/          # Authentication & App context states
-│   └── Dockerfile            # Container definition utilizing optimized 'standalone' build
+├── frontend/                                   # Interactive Control Center (Next.js 14)
+│   ├── Dockerfile                              # Multi-stage optimized Docker build for Next.js standalone container
+│   ├── .eslintrc.json                          # ESLint configuration for frontend static typings
+│   ├── next.config.js                          # Next configuration including standalone output for Docker
+│   ├── package.json / package-lock.json        # Frontend dependency manifest (Tailwind, Framer Motion, Recharts)
+│   ├── postcss.config.js / tailwind.config.js  # Styling processor and Tailwind component class configurations
+│   ├── tsconfig.json                           # TypeScript compiler parameters
+│   ├── next-env.d.ts                           # Next.js typescript declarations
+│   ├── public/                                 # Static assets served to the client
+│   │   ├── astra_logo.jpg                      # Astra-Q main platform application logo
+│   │   └── logo.png                            # Secondary platform badge graphic
+│   └── src/                                   
+│       ├── app/                                # App router & Page architectures
+│       │   ├── globals.css                     # Master stylesheet declaring Enterprise Light Mint system variables
+│       │   ├── layout.tsx                      # Root layout wrapper binding authentication context to all child routes
+│       │   ├── page.tsx                        # High-fidelity public Landing Page detailing enterprise threat defense
+│       │   ├── access/                         
+│       │   │   └── page.tsx                    # Primary Entry Gateway coordinating login and MFA workflows
+│       │   └── dashboard/                      
+│       │       ├── page.tsx                    # Core Command Center layout managing Telemetry, Control, and Ledger tabs
+│       │       └── report/                  
+│       │           └── page.tsx                # Granular Threat Report dashboard rendering dynamic entity graphs and mitigations
+│       ├── components/                         
+│       │   ├── AccessPortal/                   
+│       │   │   ├── CriticalDenial.tsx          # Renders 403 ML-DSA lockdown screen during extreme behavioral anomaly
+│       │   │   ├── LoginForm.tsx               # Orchestrates base user authentication and password extraction
+│       │   │   └── MfaChallenge.tsx            # Triggers TOTP secondary authentication when adaptive friction is assigned
+│       │   ├── AlertPanel/                     
+│       │   │   └── index.tsx                   # Right-side heads-up display rendering active temporal threats locally
+│       │   ├── ArchitecturalGraph/           
+│       │   │   └── index.tsx                   # Visualizes systemic infrastructure via D3 algorithms
+│       │   ├── AuditLedger/                  
+│       │   │   └── index.tsx                   # Displays immutable, cryptographically-signed records of past mitigations
+│       │   ├── Chatbot/                      
+│       │   │   └── index.tsx                   # Draggable LLM overlay analyzing cyber-logs via natural language context
+│       │   ├── common/                       
+│       │   │   └── NavSidebar.tsx              # Application vertical navigation toolbar orchestrating system routes
+│       │   ├── MetricsBar/                   
+│       │   │   └── index.tsx                   # Dashboard header widgets displaying throughput and active risk aggregators
+│       │   ├── SessionManager/               
+│       │   │   └── index.tsx                   # Active session visual tracker showcasing online user identities
+│       │   ├── ThreatGraph/                  
+│       │   │   └── index.tsx                   # D3.js powered Force-Directed graph bridging behavioral anomaly clusters
+│       │   ├── ThreatTable/                  
+│       │   │   └── index.tsx                   # Central event tracker allowing analysts to initiate manual containment payloads
+│       │   └── WorkflowTracker/              
+│       │       └── index.tsx                   # Progressive visual stepper tracking the multi-stage event processing pipeline
+│       ├── context/                            
+│       │   └── AuthContext.tsx                 # React Context mapping identity data across protected routes
+│       ├── hooks/                              
+│       │   ├── useMounted.ts                   # Utility hook ensuring client-side hydration safety
+│       │   ├── useThreatData.ts                # Polls historical threat sets when WebSockets are unresponsive
+│       │   └── useWebSocket.ts                 # Real-time data pipeline consuming Kafka analytics natively to the UI
+│       └── lib/
+│           ├── api.ts                          # Axios interceptors mapping frontend requests to backend core endpoints
+│           └── types.ts                        # Universal TypeScript primitives declaring Data, Model, and Risk structures
 │
-├── backend/                  # FastAPI Application Engine & Kafka Consumers
-│   ├── api/                  # REST Routers and WebSocket ingestion handlers
-│   ├── pqc/                  # Native Open-Quantum-Safe integrations (ML-KEM / ML-DSA) 
-│   ├── llm/                  # Groq API controllers and Chatbot parsers
-│   ├── ingestion/            # Kafka producer algorithms and dataset bridges
-│   └── utils/                # Auth logic, JWT issuance, and Redis keywrap logic
+├── backend/                                    # FastAPI Application Engine & Kafka Consumers
+│   ├── Dockerfile                              # Backend container incorporating gcc/cmake steps required for liboqs C-bindings
+│   ├── .env / .env.example                     # Security variables provisioning Cryptographic KEKs and Groq keys
+│   ├── compile_oqs.py                          # Automated internal build script enforcing quantum-encryption C libraries
+│   ├── main.py                                 # Core FastAPI ASGI app aggregating modular routers and enabling CORS
+│   ├── openapi.json                            # Autogenerated OpenAPI specs mapping the REST endpoints
+│   ├── pyproject.toml                          # Universal Poetry replacement declaring all backend python modules
+│   ├── requirements.txt                        # Deprecated standard python dependency graph list
+│   ├── test_login.py / test_pqc.py             # Pre-deployment validation scripts validating MFA auth logic and OQS binding stability
+│   ├── api/                                  
+│   │   ├── main.py                             # Master API aggregator linking web server middleware to sub-routers
+│   │   └── routers/                          
+│   │       ├── auth.py                         # Identity processor governing session risk assessment against Redis caches
+│   │       ├── chat.py                         # Chatbot handler communicating telemetry inquiries to the Groq LLM API
+│   │       ├── system.py                       # Uptime health checks verifying ML model integration status
+│   │       ├── threats.py                      # Containment endpoint executing policy isolation and firing ML-DSA signatures
+│   │       └── ws.py                           # Asynchronous handler mounting persistent broadcast pipes with active dashboards
+│   ├── ingestion/                              
+│   │   ├── cert_reader.py                      # Parse mechanisms pulling structured raw data frames from local CERT datasets
+│   │   ├── feature_cache.py                    # Redis-backed buffer caching historical user variables supporting fast anomaly clustering 
+│   │   ├── kafka_producer.py                   # Translates internal raw dataset structures into asynchronous live Kafka streams
+│   │   ├── simulator.py                        # Script generating synthetic malicious traffic for live demonstration testing
+│   │   └── syslog_stream.py                    # Native handler absorbing external system logs directly into the analytic pipeline
+│   ├── llm/                                  
+│   │   └── groq_client.py                      # Integration controller bundling local incident data into API requests for Llama3 analysis
+│   ├── models/                               
+│   │   ├── evaluate.py                         # Post-training logic ensuring predictive Isolation Forest outputs meet minimal thresholds
+│   │   ├── process_data.py                     # Script orchestrating dimensional reduction and categorical encodings on raw logs
+│   │   ├── test_models.py                      # Unit test protocol validating predictive outcomes prior to application integration
+│   │   └── train.py                            # Primary orchestration executing ensemble training iterations across core datasets
+│   ├── pqc/                                  
+│   │   ├── __init__.py                         # Marks Cryptographic toolkit space
+│   │   ├── audit_log.py                        # Secure JSON ledger handler caching signed Dilithium transaction hashes
+│   │   ├── dsa.py                              # ML-DSA implementation utilized for issuing unforgeable containment commands
+│   │   └── kem.py                              # ML-KEM module designed to provision symmetric session keys securely resistant to quantum-cracking
+│   ├── scripts/                              
+│   │   ├── provision_demo_secrets.py           # Seeds identical authentication hashes across Redis and Postgres for uniform demo operations
+│   │   └── provision_demo_totp_db.py           # Automatically populates mock two-factor authorization codes into the simulation graph
+│   ├── tests/                                
+│   │   ├── __init__.py                         # Initializer identifying PyTest directories
+│   │   ├── conftest.py                         # Injects pre-constructed testing fixtures across testing loops
+│   │   └── test_pqc.py                         # Unit verification directly confirming OQS library encapsulation outputs via liboqs
+│   ├── training/                             
+│   │   ├── __init__.py                         # Training module namespace
+│   │   └── train.py                            # Legacy or alternate training compilation node (often overlaps with models directory)
+│   └── utils/                                
+│       ├── __init__.py                         # Shared utilities namespace
+│       ├── keywrap.py                          # Cryptographic controller handling Fernet-based Key Encryption Keys based off `.env` 
+│       ├── secret_store.py                     # Runtime configuration manager pulling validated environment mappings automatically
+│       ├── totp_db.py                          # Secondary mock database logic enforcing accurate 2-factor code comparisons
+│       └── vault_client.py                     # Hypothetical wrapper structure mimicking hashicorp vault secret extraction protocols
 │
-├── models/                   # Pre-compiled ML models & Model definitions
-│   └── train.py              # Supervised Random/Isolation forest compilation script
+├── models/                                     # Root Pre-compiled ML models outputs
+│   └── training_report.json                    # Meta statistical output of final isolation forest training cycles displaying accuracy matrices
 │
-├── infra/                    # Deployment Infrastructure
-│   ├── docker-compose.yml    # Master deployment orchestrator
-│   └── kafka/                # Broker configuration files (Topics config)
+├── infra/                                      # Deployment Infrastructure configurations
+│   ├── .env / .env.example                     # Environment parameters establishing global container networking specifics
+│   ├── docker-compose.yml                      # Central nervous orchestration file bootstrapping the frontend, backend, Kafka, and Redis images via docker
+│   ├── kafka/                                
+│   │   └── topics.sh                           # Bash script natively bound to Zookeeper launching fundamental `aegis.telemetry` data topics instantly
+│   └── postgres/                             
+│       └── init.sql                            # SQL initialization generating mock identity user tables when relational databases are utilized
 │
-└── .env.example              # Template Secrets manifest
+└── README.md                                   # You are here - Exhaustive project blueprint and deployment instructions
 ```
 
 ---
