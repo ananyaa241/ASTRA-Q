@@ -40,6 +40,7 @@ except ImportError:
 
 DSA_ALGORITHM = "ML-DSA-87"
 KEY_DIR = os.getenv("PQC_KEY_DIR", "./pqc_keys")
+from backend.utils.keywrap import get_kek, decrypt_bytes
 
 
 @dataclass
@@ -237,20 +238,41 @@ class MLDSA87:
 
 def save_dsa_keypair(keypair: DSAKeyPair, name: str = "aegis") -> None:
     os.makedirs(KEY_DIR, exist_ok=True)
-    with open(os.path.join(KEY_DIR, f"{name}_dsa_sk.bin"), "wb") as f:
-        f.write(keypair.signing_key)
-    with open(os.path.join(KEY_DIR, f"{name}_dsa_vk.bin"), "wb") as f:
+    sk_path = os.path.join(KEY_DIR, f"{name}_dsa_sk.bin")
+    vk_path = os.path.join(KEY_DIR, f"{name}_dsa_vk.bin")
+    with open(vk_path, "wb") as f:
         f.write(keypair.verify_key)
-    logger.info(f"[PQC/DSA] Keys saved to {KEY_DIR}/{name}_dsa_*.bin")
+
+    kek = get_kek()
+    if kek:
+        from backend.utils.keywrap import encrypt_bytes
+        enc = encrypt_bytes(keypair.signing_key, kek)
+        with open(sk_path + ".enc", "wb") as f:
+            f.write(enc)
+        logger.info(f"[PQC/DSA] Private key encrypted to {sk_path}.enc")
+    else:
+        with open(sk_path, "wb") as f:
+            f.write(keypair.signing_key)
+        logger.info(f"[PQC/DSA] Private key saved to {sk_path} (unencrypted)")
 
 
 def load_dsa_keypair(name: str = "aegis") -> DSAKeyPair:
     sk_path = os.path.join(KEY_DIR, f"{name}_dsa_sk.bin")
+    sk_enc_path = sk_path + ".enc"
     vk_path = os.path.join(KEY_DIR, f"{name}_dsa_vk.bin")
-    with open(sk_path, "rb") as f:
-        sk = f.read()
     with open(vk_path, "rb") as f:
         vk = f.read()
+
+    if os.path.exists(sk_enc_path):
+        kek = get_kek()
+        if not kek:
+            raise FileNotFoundError(f"Encrypted private key found but no KEK available: {sk_enc_path}")
+        with open(sk_enc_path, "rb") as f:
+            enc = f.read()
+        sk = decrypt_bytes(enc, kek)
+    else:
+        with open(sk_path, "rb") as f:
+            sk = f.read()
     return DSAKeyPair(signing_key=sk, verify_key=vk)
 
 

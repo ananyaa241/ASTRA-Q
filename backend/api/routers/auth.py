@@ -4,10 +4,13 @@ from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from typing import Optional
 from backend.core.fusion_head import ThreatRanker
+from backend.utils.secret_store import get_user_totp_secret
 
 router = APIRouter()
 
+# Demo fallback code (development only). Controlled via env.
 DEMO_TOTP_CODE = os.getenv('DEMO_TOTP_CODE', '123456')
+DEMO_MODE = os.getenv('NODE_ENV', 'development') == 'development'
 
 class AccessRequest(BaseModel):
     user_id: str
@@ -49,10 +52,22 @@ async def request_access(req: AccessRequest, request: Request):
                 detail="MFA Required: Anomalous behavior detected. Please provide TOTP code."
             )
         
-        # Verify TOTP using a static demo secret (in prod this would be fetched from DB)
-        totp = pyotp.TOTP('base32secret3232')
-        if req.totp_code != DEMO_TOTP_CODE and not totp.verify(req.totp_code):
-            raise HTTPException(status_code=401, detail="Invalid MFA token")
+        # Verify TOTP using a per-user secret fetched from the secure secret store.
+        # In production this secret should be unique per user and stored encrypted.
+        try:
+            user_secret = await get_user_totp_secret(req.user_id)
+        except FileNotFoundError:
+            # No per-user secret provisioned — allow demo-code only in development
+            user_secret = None
+
+        if user_secret:
+            totp = pyotp.TOTP(user_secret)
+            if not totp.verify(req.totp_code):
+                raise HTTPException(status_code=401, detail="Invalid MFA token")
+        else:
+            # Fallback: only accept the demo code when in development mode
+            if not DEMO_MODE or req.totp_code != DEMO_TOTP_CODE:
+                raise HTTPException(status_code=401, detail="Invalid MFA token")
             
     return {
         "status": "success", 

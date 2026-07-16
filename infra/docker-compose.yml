@@ -120,7 +120,8 @@ services:
       - "5433:5432"
     environment:
       POSTGRES_USER: aegis
-      POSTGRES_PASSWORD: aegis_secret
+      # MUST be set via env or infra/.env (no default allowed)
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: aegisq
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -145,7 +146,8 @@ services:
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       REDIS_URL: redis://redis:6379
-      DATABASE_URL: postgresql+asyncpg://aegis:aegis_secret@postgres:5432/aegisq
+      # DATABASE_URL must be constructed from environment; do not hardcode passwords.
+      DATABASE_URL: postgresql+asyncpg://aegis:${POSTGRES_PASSWORD}@postgres:5432/aegisq
       DATASET_PATH: /app/dataset
       PQC_MODE: placeholder
       LOG_LEVEL: INFO

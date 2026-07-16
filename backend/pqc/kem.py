@@ -43,6 +43,7 @@ except ImportError:
 
 KEM_ALGORITHM = "ML-KEM-1024"
 KEY_DIR = os.getenv("PQC_KEY_DIR", "./pqc_keys")
+from backend.utils.keywrap import get_kek, decrypt_bytes
 
 
 @dataclass
@@ -155,21 +156,44 @@ class MLKEM1024:
 def save_keypair(keypair: KEMKeyPair, name: str = "aegis") -> None:
     """Persist key pair to disk (private key should be encrypted in production)."""
     os.makedirs(KEY_DIR, exist_ok=True)
-    with open(os.path.join(KEY_DIR, f"{name}_kem_pk.bin"), "wb") as f:
+    pk_path = os.path.join(KEY_DIR, f"{name}_kem_pk.bin")
+    sk_path = os.path.join(KEY_DIR, f"{name}_kem_sk.bin")
+    with open(pk_path, "wb") as f:
         f.write(keypair.public_key)
-    with open(os.path.join(KEY_DIR, f"{name}_kem_sk.bin"), "wb") as f:
-        f.write(keypair.private_key)
-    logger.info(f"[PQC/KEM] Keys saved to {KEY_DIR}/{name}_kem_*.bin")
+
+    kek = get_kek()
+    if kek:
+        # Store encrypted private key
+        sk_enc_path = sk_path + ".enc"
+        from backend.utils.keywrap import encrypt_bytes
+        enc = encrypt_bytes(keypair.private_key, kek)
+        with open(sk_enc_path, "wb") as f:
+            f.write(enc)
+        logger.info(f"[PQC/KEM] Private key encrypted to {sk_enc_path}")
+    else:
+        with open(sk_path, "wb") as f:
+            f.write(keypair.private_key)
+        logger.info(f"[PQC/KEM] Private key saved to {sk_path} (unencrypted)")
 
 
 def load_keypair(name: str = "aegis") -> KEMKeyPair:
     """Load key pair from disk."""
     pk_path = os.path.join(KEY_DIR, f"{name}_kem_pk.bin")
     sk_path = os.path.join(KEY_DIR, f"{name}_kem_sk.bin")
+    sk_enc_path = sk_path + ".enc"
     with open(pk_path, "rb") as f:
         pub = f.read()
-    with open(sk_path, "rb") as f:
-        priv = f.read()
+
+    if os.path.exists(sk_enc_path):
+        kek = get_kek()
+        if not kek:
+            raise FileNotFoundError(f"Encrypted private key found but no KEK available: {sk_enc_path}")
+        with open(sk_enc_path, "rb") as f:
+            enc = f.read()
+        priv = decrypt_bytes(enc, kek)
+    else:
+        with open(sk_path, "rb") as f:
+            priv = f.read()
     return KEMKeyPair(public_key=pub, private_key=priv)
 
 

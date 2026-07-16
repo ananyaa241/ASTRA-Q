@@ -116,9 +116,11 @@ pip install torch_geometric
 
 ### Step 3: Configure Environment
 
-Create `backend/.env`:
+Create `backend/.env` (do NOT commit real secrets):
 ```env
-DATABASE_URL=postgresql+asyncpg://aegis:aegis_secret@localhost:5433/aegisq
+# Set `POSTGRES_PASSWORD` in a local `.env` or use a secrets manager.
+POSTGRES_PASSWORD=
+DATABASE_URL=postgresql+asyncpg://aegis:${POSTGRES_PASSWORD}@localhost:5433/aegisq
 REDIS_URL=redis://localhost:6379
 KAFKA_BOOTSTRAP_SERVERS=localhost:9092
 DATASET_PATH=../dataset/r4.2
@@ -180,6 +182,27 @@ npm run dev
 Navigate to: **http://localhost:3000**
 
 ---
+
+## Provision demo TOTP secrets (development)
+
+1. Copy `infra/.env.example` to `infra/.env` and set `AEGIS_KEK` if you want encrypted secrets.
+2. Start the infra (see Option A step 2).
+3. Provision demo secrets inside the backend container:
+
+```powershell
+cd infra
+docker compose exec backend python -m backend.scripts.provision_demo_secrets
+```
+
+Or run locally (if you have the venv and dependencies installed):
+
+```powershell
+Set-Location '..\'
+python backend\scripts\provision_demo_secrets.py
+```
+
+This writes per-user TOTP secrets under `backend/pqc_keys/`. If `AEGIS_KEK` is set the secrets are encrypted, otherwise plaintext fallback files are created for development.
+
 
 ## Option C — Training the AI Models
 
