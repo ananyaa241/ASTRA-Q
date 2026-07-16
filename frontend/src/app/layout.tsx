@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { AuthContextProvider } from '@/context/AuthContext';
 
 export const metadata: Metadata = {
   title: 'ASTRA-Q | Advanced Security Threat Response Architecture – Quantum',
@@ -43,8 +44,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           background: '#070b14',
         }}
       >
-        {children}
+        <AuthContextProvider>
+          {children}
+        </AuthContextProvider>
       </body>
     </html>
   );
 }
+

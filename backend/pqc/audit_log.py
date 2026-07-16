@@ -198,15 +198,26 @@ class PQCAuditLogger:
             True if signature is valid and payload hash matches
         """
         # Reconstruct signable payload
+        # action_payload may be a dict (JSONB from PostgreSQL) or a JSON string (SQLite/synthetic)
+        raw_payload = entry.get("action_payload", "{}")
+        if isinstance(raw_payload, dict):
+            payload_obj = raw_payload
+        else:
+            try:
+                payload_obj = json.loads(raw_payload)
+            except (TypeError, ValueError):
+                payload_obj = {}
+
         signable = {
-            "id": entry.get("id"),
-            "timestamp": entry.get("created_at"),
+            "id": str(entry.get("id", "")),
+            "timestamp": str(entry.get("created_at", "")),
             "action_type": entry.get("action_type"),
             "actor": entry.get("actor"),
             "target_user": entry.get("target_user"),
             "target_session": entry.get("target_session"),
-            "payload": json.loads(entry.get("action_payload", "{}")),
+            "payload": payload_obj,
         }
+
 
         # Verify hash
         canonical = json.dumps(signable, sort_keys=True, default=str).encode("utf-8")

@@ -38,7 +38,7 @@ docker compose up -d
 This starts:
 - **Zookeeper + Kafka** (port 9092) — event streaming
 - **Redis 7.2** (port 6379) — feature cache (T_lookup ≤ 2ms)
-- **PostgreSQL 16** (port 5432) — persistent store + audit trail
+- **PostgreSQL 16** (port 5433) — persistent store + audit trail
 - **Kafka topic init** — creates all 7 topics
 - **FastAPI backend** (port 8000)
 - **Next.js frontend** (port 3000)
@@ -118,7 +118,7 @@ pip install torch_geometric
 
 Create `backend/.env`:
 ```env
-DATABASE_URL=postgresql+asyncpg://aegis:aegis_secret@localhost:5432/aegisq
+DATABASE_URL=postgresql+asyncpg://aegis:aegis_secret@localhost:5433/aegisq
 REDIS_URL=redis://localhost:6379
 KAFKA_BOOTSTRAP_SERVERS=localhost:9092
 DATASET_PATH=../dataset/r4.2
@@ -133,7 +133,7 @@ SAMPLE_MODE=true
 
 ```bash
 # Run schema init (if not using Docker init)
-psql -U aegis -d aegisq -h localhost -f ../infra/postgres/init.sql
+psql -U aegis -d aegisq -h localhost -p 5433 -f ../infra/postgres/init.sql
 ```
 
 ### Step 5: Run the Backend
@@ -240,7 +240,7 @@ pytest --cov=backend --cov-report=term-missing -v
 | API Docs (Swagger) | 8000 | http://localhost:8000/docs |
 | Kafka Broker | 9092 | localhost:9092 |
 | Redis | 6379 | redis://localhost:6379 |
-| PostgreSQL | 5432 | postgresql://localhost:5432/aegisq |
+| PostgreSQL | 5433 | postgresql://localhost:5433/aegisq |
 
 ---
 

@@ -16,7 +16,7 @@ import logging
 import os
 import time
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Any
 
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,7 +27,7 @@ from backend.cache.redis_cache import FeatureCache
 from backend.pqc.dsa import MLDSA87, get_dsa, load_dsa_keypair, save_dsa_keypair
 from backend.pqc.kem import MLKEM1024, get_kem, load_keypair, save_keypair
 from backend.pqc.audit_log import get_audit_logger, AuditActionType
-from backend.api.routers import threats, graph, audit, ws
+from backend.api.routers import threats, graph, audit, ws, auth
 from backend.api.middleware.pqc_middleware import PQCHeaderMiddleware
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql+asyncpg://aegis:aegis_secret@localhost:5432/aegisq"
+    "postgresql+asyncpg://aegis:aegis_secret@localhost:5433/aegisq"
 )
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
 PQC_KEY_DIR = os.getenv("PQC_KEY_DIR", "./pqc_keys")
@@ -51,12 +51,14 @@ logging.basicConfig(
 # ─────────────────────────────────────────────────────────────────
 # Database Engine
 # ─────────────────────────────────────────────────────────────────
+engine_args: dict[str, Any] = {"pool_pre_ping": True, "echo": False}
+if not DATABASE_URL.startswith("sqlite"):
+    engine_args["pool_size"] = 20
+    engine_args["max_overflow"] = 10
+
 engine = create_async_engine(
     DATABASE_URL,
-    pool_size=20,
-    max_overflow=10,
-    pool_pre_ping=True,
-    echo=False,
+    **engine_args
 )
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
@@ -195,6 +197,7 @@ app.include_router(threats.router, prefix="/api/threats", tags=["Threats"])
 app.include_router(graph.router, prefix="/api/graph", tags=["Graph"])
 app.include_router(audit.router, prefix="/api/audit", tags=["Audit"])
 app.include_router(ws.router, prefix="/ws", tags=["WebSocket"])
+app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 
 
 # ─────────────────────────────────────────────────────────────────

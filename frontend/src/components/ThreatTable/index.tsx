@@ -112,9 +112,11 @@ export default function ThreatTable({ threats }: Props) {
                   display: 'grid', gridTemplateColumns: '80px 1fr 68px 80px 68px',
                   gap: 8, padding: '9px 14px', cursor: 'pointer',
                   borderBottom: '1px solid rgba(34,211,238,0.04)',
-                  background: isSelected ? 'rgba(34,211,238,0.04)' : isContained ? 'rgba(34,197,94,0.04)' : 'transparent',
-                  transition: 'background 150ms',
+                  background: isSelected ? 'rgba(34,211,238,0.06)' : isContained ? 'rgba(34,197,94,0.04)' : 'transparent',
+                  boxShadow: isSelected ? 'inset 2px 0 0 var(--color-cyan)' : 'none',
+                  transition: 'background 150ms, box-shadow 150ms',
                 }}
+                whileHover={{ background: isSelected ? 'rgba(34,211,238,0.08)' : 'rgba(34,211,238,0.03)' }}
               >
                 {/* User ID */}
                 <div style={{
@@ -185,10 +187,14 @@ export default function ThreatTable({ threats }: Props) {
                       onClick={(e) => { e.stopPropagation(); handleContain(t, 'ISOLATE'); }}
                       disabled={containing === t.session_id}
                       style={{
-                        padding: '3px 8px', borderRadius: 5, fontSize: 9, cursor: 'pointer',
-                        background: 'var(--color-critical-bg)', color: 'var(--color-critical)',
-                        border: '1px solid rgba(239,68,68,0.3)', fontFamily: 'var(--font-mono)',
-                        fontWeight: 600, transition: 'all 150ms',
+                        padding: '5px 10px', fontSize: 9,
+                        fontFamily: 'var(--font-mono)',
+                        fontWeight: 600,
+                        background: 'rgba(34,211,238,0.1)', color: 'var(--color-cyan)',
+                        border: '1px solid rgba(34,211,238,0.4)',
+                        boxShadow: '0 0 12px rgba(34,211,238,0.1)',
+                        borderRadius: '6px',
+                        transition: 'all 200ms',
                         opacity: containing === t.session_id ? 0.5 : 1,
                       }}>
                       {containing === t.session_id ? '...' : 'CONTAIN'}

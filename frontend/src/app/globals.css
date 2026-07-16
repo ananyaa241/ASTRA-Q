@@ -1,17 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* ─────────────────────────────────────────────────────────────────
    Design Tokens — Aegis-Q "Dark Glass Command Center"
    ───────────────────────────────────────────────────────────────── */
 :root {
-  --color-bg-base:        #070b14;
+  --color-bg-base:        #04070d;
   --color-bg-surface:     #0d1424;
   --color-bg-elevated:    #111c30;
-  --color-bg-glass:       rgba(13, 20, 36, 0.65);
+  --color-bg-glass:       rgba(13, 20, 36, 0.55);
 
   --color-cyan:           #22d3ee;
   --color-cyan-dim:       rgba(34, 211, 238, 0.15);
-  --color-cyan-glow:      0 0 24px rgba(34, 211, 238, 0.35);
+  --color-cyan-glow:      0 0 32px rgba(34, 211, 238, 0.4);
   --color-amber:          #f59e0b;
   --color-amber-dim:      rgba(245, 158, 11, 0.12);
   --color-rose:           #f43f5e;
@@ -120,15 +123,16 @@ body::after {
 /* ─── Glass Card ─────────────────────────────────────────────────── */
 .glass-card {
   background: var(--color-bg-glass);
-  backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 32px rgba(34, 211, 238, 0.02), 0 8px 32px rgba(0, 0, 0, 0.5);
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 .glass-card:hover {
   border-color: var(--color-border-hover);
-  box-shadow: 0 0 24px rgba(34, 211, 238, 0.07);
+  box-shadow: inset 0 0 48px rgba(34, 211, 238, 0.05), 0 8px 32px rgba(0, 0, 0, 0.5), var(--color-cyan-glow);
 }
 
 /* Panel that fills its flex slot and scrolls internally */
@@ -256,3 +260,100 @@ body::after {
 }
 .empty-state svg { opacity: 0.25; }
 .empty-state p   { font-size: 12px; }
+
+/* ─── Phase 3: Dashboard 3-Column Layout ─────────────────────────── */
+.dashboard-shell {
+  display: grid;
+  grid-template-columns: 200px 1fr 390px;
+  grid-template-rows: 1fr;
+  gap: 10px;
+  padding: 10px 14px 12px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.dashboard-left   { display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow: hidden; }
+.dashboard-center { display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow: hidden; }
+.dashboard-right  { display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow: hidden; }
+
+/* ─── Workflow Stepper ───────────────────────────────────────────── */
+.workflow-step         { transition: all 200ms ease; }
+.workflow-step-pending { color: var(--color-text-muted); }
+.workflow-step-active  { color: var(--color-cyan); }
+.workflow-step-complete{ color: var(--color-low); }
+.workflow-step-alert   { color: var(--color-critical); }
+@keyframes step-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.15)} }
+.workflow-step-active .step-circle { animation: step-pulse 1.5s ease-in-out infinite; }
+
+/* ─── Architecture Map ───────────────────────────────────────────── */
+.arch-layer-card {
+  background: var(--color-bg-glass);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  transition: border-color var(--transition-fast);
+}
+.arch-layer-card:hover { border-color: var(--color-border-hover); }
+.arch-layer-pill {
+  display: inline-flex; align-items: center;
+  padding: 1px 6px; border-radius: 999px;
+  font-size: 8px; font-weight: 600;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+  background: rgba(34,211,238,0.08);
+  border: 1px solid rgba(34,211,238,0.2);
+  color: var(--color-cyan);
+  white-space: nowrap;
+}
+
+/* ─── Session Panel ──────────────────────────────────────────────── */
+.session-card {
+  padding: 8px 12px;
+  border-left: 2px solid transparent;
+  transition: all 200ms;
+  cursor: default;
+}
+.session-card:hover { background: rgba(34,211,238,0.03); }
+@keyframes session-pulse-critical {
+  0%,100%{ border-left-color: rgba(239,68,68,0.6); }
+  50%    { border-left-color: rgba(239,68,68,1.0); }
+}
+.session-card-critical { animation: session-pulse-critical 2s ease-in-out infinite; }
+
+/* ─── Nav Sidebar ────────────────────────────────────────────────── */
+.nav-sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0;
+  width: 48px;
+  background: rgba(7,11,20,0.95);
+  border-right: 1px solid var(--color-border);
+  backdrop-filter: blur(24px);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 12px 0; gap: 4px; z-index: 100;
+}
+.nav-icon-btn {
+  width: 36px; height: 36px; border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid transparent;
+  color: var(--color-text-muted); cursor: pointer;
+  transition: all var(--transition-fast); position: relative;
+}
+.nav-icon-btn:hover, .nav-icon-btn.active {
+  background: rgba(34,211,238,0.1);
+  border-color: rgba(34,211,238,0.25);
+  color: var(--color-cyan);
+}
+.nav-badge {
+  position: absolute; top: 2px; right: 2px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--color-critical); color: #fff;
+  font-size: 8px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+}
+
+/* ─── Pulse Critical (used by CriticalDenial) ────────────────────── */
+@keyframes pulse-critical {
+  0%,100% { box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 0 rgba(239,68,68,0.3); }
+  50%     { box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px 8px rgba(239,68,68,0.15); }
+}
+

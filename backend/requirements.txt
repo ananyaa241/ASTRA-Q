@@ -36,6 +36,7 @@ torch_geometric>=2.5.0
 
 # ─── Crypto (for HMAC placeholder and hashing) ─────────────────────
 cryptography>=42.0.0
+pyotp==2.9.0
 
 # ─── Monitoring & Observability ────────────────────────────────────
 prometheus-client==0.20.0

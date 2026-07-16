@@ -2,15 +2,20 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import type { WSMessage } from '@/lib/types';
 import { TIER_COLORS } from '@/lib/types';
+import { useMounted } from '@/hooks/useMounted';
 
 type AlertMsg = Extract<WSMessage, { type: 'alert' }>;
 
 interface Props {
   alerts: WSMessage[];
   onDismiss: (idx: number) => void;
+  onTerminate: (sessionId: string, userId: string) => void;  // NEW: ISOLATE from alert panel
+  onSever: (sessionId: string) => void;                       // NEW: ALERT_ANALYST from alert panel
 }
 
-export default function AlertPanel({ alerts, onDismiss }: Props) {
+export default function AlertPanel({ alerts, onDismiss, onTerminate, onSever }: Props) {
+  const mounted = useMounted();
+  
   // Preserve original index for correct dismiss targeting
   const alertList: Array<{ msg: AlertMsg; originalIdx: number }> = alerts
     .map((a, i) => ({ msg: a as AlertMsg, originalIdx: i }))
@@ -32,10 +37,11 @@ export default function AlertPanel({ alerts, onDismiss }: Props) {
               transition={{ duration: 0.25 }}
               style={{
                 display: 'flex', alignItems: 'center', gap: 12,
-                padding: '10px 16px', borderRadius: 10,
-                background: tc.bg,
+                padding: '12px 18px', borderRadius: 12,
+                background: `linear-gradient(90deg, ${tc.bg}, rgba(13,20,36,0.95))`,
+                backdropFilter: 'blur(16px)',
                 border: `1px solid ${tc.border}`,
-                boxShadow: alert.severity === 'CRITICAL' ? tc.glow : 'none',
+                boxShadow: alert.severity === 'CRITICAL' ? tc.glow : 'inset 0 0 16px rgba(255,255,255,0.02), 0 4px 16px rgba(0,0,0,0.5)',
               }}
             >
               {/* Severity icon */}
@@ -66,7 +72,7 @@ export default function AlertPanel({ alerts, onDismiss }: Props) {
                   <span style={{ fontSize: 10, color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
                     {alert.session_id}
                   </span>
-                  <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: tc.text, fontWeight: 700 }}>
+                  <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: tc.text, fontWeight: 700, textShadow: `0 0 8px ${tc.border}` }}>
                     {(alert.score * 100).toFixed(1)}%
                   </span>
                 </div>
@@ -75,9 +81,43 @@ export default function AlertPanel({ alerts, onDismiss }: Props) {
                 </div>
               </div>
 
+              {/* Action buttons — only for CRITICAL/HIGH */}
+              {(alert.severity === 'CRITICAL' || alert.severity === 'HIGH') && (
+                <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
+                  <button
+                    onClick={() => onTerminate(alert.session_id, alert.user_id)}
+                    aria-label="Terminate session"
+                    style={{
+                      background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.4)',
+                      borderRadius: 5, cursor: 'pointer', padding: '3px 7px',
+                      color: '#ef4444', fontSize: 9, fontFamily: 'var(--font-mono)',
+                      fontWeight: 700, transition: 'all 150ms', letterSpacing: '0.04em',
+                    }}
+                    onMouseOver={e => e.currentTarget.style.background = 'rgba(239,68,68,0.28)'}
+                    onMouseOut={e => e.currentTarget.style.background = 'rgba(239,68,68,0.15)'}
+                  >
+                    TERMINATE
+                  </button>
+                  <button
+                    onClick={() => onSever(alert.session_id)}
+                    aria-label="Sever connection"
+                    style={{
+                      background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.35)',
+                      borderRadius: 5, cursor: 'pointer', padding: '3px 7px',
+                      color: '#f59e0b', fontSize: 9, fontFamily: 'var(--font-mono)',
+                      fontWeight: 700, transition: 'all 150ms', letterSpacing: '0.04em',
+                    }}
+                    onMouseOver={e => e.currentTarget.style.background = 'rgba(245,158,11,0.22)'}
+                    onMouseOut={e => e.currentTarget.style.background = 'rgba(245,158,11,0.12)'}
+                  >
+                    SEVER
+                  </button>
+                </div>
+              )}
+
               <div style={{ fontSize: 9, color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)', flexShrink: 0 }}
                 suppressHydrationWarning>
-                {new Date(alert.timestamp).toLocaleTimeString()}
+                {mounted ? new Date(alert.timestamp).toLocaleTimeString() : '--:--:--'}
               </div>
 
               {/* Dismiss — uses original index for correct splice */}

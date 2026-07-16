@@ -18,7 +18,7 @@ import logging
 import os
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 
 import numpy as np
 import torch
@@ -162,7 +162,7 @@ def train(
     lr: float = 3e-4,
     device: str = "cpu",
     sample: bool = False,
-) -> Dict[str, any]:
+) -> Dict[str, Any]:
     """
     Train the Sequential Transformer (Engine B) with Focal Loss.
 

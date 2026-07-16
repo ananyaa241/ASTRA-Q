@@ -1,4 +1,3 @@
-version: "3.9"
 
 networks:
   aegis-net:
@@ -17,6 +16,7 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
     container_name: aegis-zookeeper
+    restart: on-failure
     networks: [aegis-net]
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -35,6 +35,7 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.6.0
     container_name: aegis-kafka
+    restart: on-failure
     networks: [aegis-net]
     depends_on:
       zookeeper:
@@ -86,6 +87,7 @@ services:
   redis:
     image: redis:7.2-alpine
     container_name: aegis-redis
+    restart: on-failure
     networks: [aegis-net]
     ports:
       - "6379:6379"
@@ -112,6 +114,7 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: aegis-postgres
+    restart: on-failure
     networks: [aegis-net]
     ports:
       - "5433:5432"

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { AuditEntry } from '@/lib/types';
 import { verifyAuditEntry } from '@/lib/api';
+import { useMounted } from '@/hooks/useMounted';
 
 interface Props { entries: AuditEntry[]; }
 
@@ -32,6 +33,7 @@ export default function AuditTrail({ entries }: Props) {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [verifying, setVerifying] = useState<string | null>(null);
   const [verifyResults, setVerifyResults] = useState<Record<string, boolean>>({});
+  const mounted = useMounted();
 
   const handleVerify = async (entryId: string) => {
     setVerifying(entryId);
@@ -59,8 +61,9 @@ export default function AuditTrail({ entries }: Props) {
           <span style={{ fontWeight: 600, fontSize: 13 }}>PQC Audit Trail</span>
           <span style={{
             fontSize: 9, fontFamily: 'var(--font-mono)', color: '#a5b4fc',
-            padding: '2px 8px', background: 'rgba(165,180,252,0.1)',
-            border: '1px solid rgba(165,180,252,0.25)', borderRadius: 4,
+            padding: '3px 8px', background: 'rgba(165,180,252,0.15)',
+            border: '1px solid rgba(165,180,252,0.4)', borderRadius: 6,
+            boxShadow: '0 0 16px rgba(165,180,252,0.2), inset 0 0 8px rgba(165,180,252,0.1)'
           }}>ML-DSA-87 · Append-Only</span>
         </div>
         <span style={{ fontSize: 11, color: 'var(--color-text-muted)' }}>
@@ -96,21 +99,23 @@ export default function AuditTrail({ entries }: Props) {
                 transition={{ delay: i * 0.02 }}
               >
                 {/* Main row */}
-                <div
+                <motion.div
                   onClick={() => setExpanded(isExpanded ? null : entry.id)}
+                  whileHover={{ background: 'rgba(34,211,238,0.03)' }}
                   style={{
                     display: 'grid',
                     gridTemplateColumns: '120px 140px 90px 100px 1fr 70px 66px',
                     gap: 8, padding: '7px 14px', cursor: 'pointer',
-                    borderBottom: '1px solid rgba(34,211,238,0.03)',
-                    background: isExpanded ? 'rgba(34,211,238,0.03)' : 'transparent',
-                    transition: 'background 150ms',
+                    borderBottom: '1px solid var(--color-border)',
+                    background: isExpanded ? 'rgba(34,211,238,0.05)' : 'transparent',
+                    boxShadow: isExpanded ? 'inset 2px 0 0 #a5b4fc' : 'none',
+                    transition: 'all 150ms',
                   }}
                 >
                   {/* Timestamp */}
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--color-text-muted)' }}>
                     <span suppressHydrationWarning>
-                      {new Date(entry.created_at).toLocaleTimeString()}
+                      {mounted ? new Date(entry.created_at).toLocaleTimeString() : '--:--:--'}
                     </span>
                   </span>
 
@@ -173,7 +178,7 @@ export default function AuditTrail({ entries }: Props) {
                       : verifyResult === false ? '✗ FAIL'
                       : 'VERIFY'}
                   </button>
-                </div>
+                </motion.div>
 
                 {/* Expanded signature panel */}
                 <AnimatePresence>

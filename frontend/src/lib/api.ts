@@ -8,7 +8,7 @@ import type {
   ContainmentRequest,
 } from './types';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -101,3 +101,29 @@ export async function fetchHealth(): Promise<{
 }> {
   return apiFetch('/health');
 }
+
+// ─── Auth ────────────────────────────────────────────────────────────
+
+export interface AuthResponseData {
+  status: string;
+  message: string;
+  risk_tier: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  fused_score: number;
+}
+
+/**
+ * Request access to ASTRA-Q. Pass totpCode for the MFA step.
+ * On 401/403 the fetch will throw — callers should use raw fetch and
+ * handle error statuses themselves (see LoginFormWithPasswordCapture).
+ */
+export async function requestAccess(
+  userId: string,
+  password: string,
+  totpCode?: string,
+): Promise<AuthResponseData> {
+  return apiFetch<AuthResponseData>('/api/auth/request-access', {
+    method: 'POST',
+    body: JSON.stringify({ user_id: userId, password, totp_code: totpCode ?? null }),
+  });
+}
+

@@ -36,12 +36,13 @@ function KPICard({ label, value, sub, status = 'neutral', sparkline, delay = 0 }
       transition={{ duration: 0.3, delay }}
       style={{
         flex: 1, minWidth: 100,
-        background: 'rgba(13,20,36,0.6)',
-        backdropFilter: 'blur(12px)',
-        border: `1px solid ${statusColor}22`,
-        borderRadius: 8, padding: '8px 12px',
-        display: 'flex', flexDirection: 'column', gap: 2,
-        transition: 'box-shadow 300ms',
+        background: 'rgba(7, 11, 20, 0.7)',
+        backdropFilter: 'blur(16px) saturate(1.5)',
+        border: `1px solid ${statusColor}33`,
+        borderRadius: 12, padding: '10px 14px',
+        display: 'flex', flexDirection: 'column', gap: 4,
+        boxShadow: `inset 0 0 24px ${statusColor}08, 0 4px 12px rgba(0,0,0,0.5)`,
+        transition: 'all 300ms',
       }}
     >
       <div className="section-label" style={{ fontSize: 9 }}>{label}</div>
@@ -74,9 +75,10 @@ function KPICard({ label, value, sub, status = 'neutral', sparkline, delay = 0 }
               ).join(' ')}
               fill="none"
               stroke={statusColor}
-              strokeWidth="4"
+              strokeWidth="5"
               strokeLinejoin="round"
-              opacity="0.1"
+              opacity="0.2"
+              style={{ filter: 'blur(3px)' }}
             />
           </svg>
         )}

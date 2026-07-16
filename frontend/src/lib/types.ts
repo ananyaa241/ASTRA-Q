@@ -97,6 +97,9 @@ export interface ContainmentRequest {
   reason: string;
 }
 
+// Named export for ContainmentAction (subset of ContainmentRequest.action)
+export type ContainmentAction = 'ISOLATE' | 'LOCK_ACCOUNT' | 'MONITOR_ENHANCED' | 'ALERT_ANALYST';
+
 // Colour utilities
 export const TIER_COLORS: Record<RiskTier, { bg: string; text: string; border: string; glow: string }> = {
   CRITICAL: { bg: 'rgba(239,68,68,0.15)', text: '#ef4444', border: '#ef4444', glow: '0 0 20px rgba(239,68,68,0.4)' },

@@ -168,19 +168,20 @@ export default function ThreatGraph({ topology }: Props) {
     const tooltip = d3.select(containerRef.current)
       .append('div')
       .style('position', 'absolute')
-      .style('background', 'rgba(13,20,36,0.96)')
-      .style('border', '1px solid rgba(34,211,238,0.25)')
+      .style('background', 'rgba(4, 7, 13, 0.96)')
+      .style('backdrop-filter', 'blur(12px)')
+      .style('border', '1px solid rgba(34,211,238,0.4)')
       .style('border-radius', '8px')
-      .style('padding', '10px 14px')
+      .style('padding', '12px 16px')
       .style('font-family', 'JetBrains Mono, monospace')
       .style('font-size', '11px')
       .style('color', '#e2e8f0')
       .style('pointer-events', 'none')
       .style('opacity', '0')
-      .style('transition', 'opacity 120ms')
+      .style('transition', 'opacity 150ms ease-out')
       .style('z-index', '100')
-      .style('max-width', '200px')
-      .style('box-shadow', '0 4px 24px rgba(0,0,0,0.5)');
+      .style('max-width', '220px')
+      .style('box-shadow', '0 8px 32px rgba(0,0,0,0.8), 0 0 24px rgba(34, 211, 238, 0.2) inset');
 
     node
       .on('mouseover', (event, d) => {
@@ -195,8 +196,8 @@ export default function ThreatGraph({ topology }: Props) {
       .on('mousemove', event => {
         const rect = containerRef.current!.getBoundingClientRect();
         tooltip
-          .style('left', `${event.clientX - rect.left + 14}px`)
-          .style('top',  `${event.clientY - rect.top  - 10}px`);
+          .style('left', (event.clientX - rect.left + 14) + 'px')
+          .style('top',  (event.clientY - rect.top - 10) + 'px');
       })
       .on('mouseout', () => tooltip.style('opacity', '0'));
 

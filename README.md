@@ -14,7 +14,7 @@
 
 ## 1. Enterprise Cybernetic Immunity Architecture
 
-Aegis-Q is designed as a **cybernetic immunity system** — it continuously observes user behavior, detects deviations, and responds with cryptographically-verified containment actions.
+ASTRA-Q is designed as an **In-Line Privileged Access Management (PAM) Broker & cybernetic immunity system** — it continuously observes user behavior, evaluates risk scores, enforces dynamic Risk-Based Authentication (RBA), and responds with cryptographically-verified containment actions.
 
 ```
 CERT r4.2 Dataset
@@ -49,7 +49,7 @@ CERT r4.2 Dataset
                           │
                           ▼
               FastAPI + WebSocket (P99 ≤ 35ms)
-              /api/threats | /api/graph | /api/audit | /ws/events
+              /api/threats | /api/graph | /api/audit | /api/auth (Identity Gateway) | /ws/events
                           │
                           ▼
               Next.js 14 SOC Dashboard
