@@ -1,5 +1,5 @@
 """
-Aegis-Q Engine B: Sequential Transformer
+Astra-Q Engine B: Sequential Transformer
 ==========================================
 Causal transformer that models chronological event token sequences to detect
 behavioral anomalies and temporal attack patterns.
@@ -395,3 +395,4 @@ class EventTokenizer:
             mask[i, :L] = False  # Not padding
 
         return tokens_padded, times_padded, mask
+

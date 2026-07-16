@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
-LABEL maintainer="aegis-q"
-LABEL description="Aegis-Q Backend — Quantum-Hardened Insider Threat Detection"
+LABEL maintainer="Astra-Q"
+LABEL description="Astra-Q Backend — Quantum-Hardened Insider Threat Detection"
 
 # System dependencies (for liboqs and psycopg2)
 RUN apt-get update && apt-get install -y \
@@ -25,10 +25,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Optional: Install PyTorch Geometric
 RUN pip install --no-cache-dir torch_geometric || true
 
-# Optional: Build liboqs for real PQC (skip if CMake not available)
-# Avoid installing it in the container image because the environment may not
-# have network access to the upstream liboqs repository.
-RUN pip uninstall -y liboqs-python || true
+# Guarantee liboqs C-library is perfectly compiled to activate true Quantum-Proof Cryptography
+ENV OQS_BUILD_NINJA=1
+RUN pip install --no-cache-dir liboqs-python
 
 # Copy source
 COPY . /app/backend
@@ -43,3 +42,4 @@ USER aegis
 EXPOSE 8000
 
 CMD ["uvicorn", "backend.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+

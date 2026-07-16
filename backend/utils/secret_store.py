@@ -9,12 +9,13 @@ from typing import Optional
 SECRETS_DIR = os.getenv('AEGIS_SECRETS_DIR', '/app/pqc_keys')
 KEK = os.getenv('AEGIS_KEK')
 
-if KEK is None:
-    # For local dev only: generate an ephemeral key (not persisted)
-    # Logically this should be fatal for production.
-    KEK = Fernet.generate_key().decode()
-
-fernet = Fernet(KEK.encode())
+try:
+    if not KEK or KEK == "${AEGIS_KEK}":
+        raise ValueError("KEK is empty or unpopulated.")
+    fernet = Fernet(KEK.encode())
+except Exception as e:
+    print(f"WARN: Falling back to ephemeral Fernet key due to: {e}")
+    fernet = Fernet(Fernet.generate_key())
 
 async def get_user_totp_secret(user_id: str) -> str:
     """Return the decrypted TOTP secret for a user.

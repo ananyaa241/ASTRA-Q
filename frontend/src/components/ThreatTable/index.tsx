@@ -44,8 +44,8 @@ export default function ThreatTable({ threats }: Props) {
       }} className="scroll-panel__header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-cyan)" strokeWidth="2">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
           </svg>
           <span style={{ fontWeight: 600, fontSize: 13 }}>Threat Sessions</span>
           <span style={{
@@ -102,21 +102,22 @@ export default function ThreatTable({ threats }: Props) {
 
             return (
               <motion.div
+                layout
                 key={t.session_id}
                 initial={{ opacity: 0, x: 16 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -16 }}
-                transition={{ duration: 0.2, delay: i < 10 ? i * 0.03 : 0 }}
+                exit={{ opacity: 0, x: -16, scale: 0.95 }}
+                transition={{ duration: 0.3, ease: 'easeOut', delay: i < 10 ? i * 0.03 : 0 }}
                 onClick={() => setSelected(isSelected ? null : t.session_id)}
                 style={{
                   display: 'grid', gridTemplateColumns: '80px 1fr 68px 80px 68px',
                   gap: 8, padding: '9px 14px', cursor: 'pointer',
-                  borderBottom: '1px solid rgba(34,211,238,0.04)',
-                  background: isSelected ? 'rgba(34,211,238,0.06)' : isContained ? 'rgba(34,197,94,0.04)' : 'transparent',
-                  boxShadow: isSelected ? 'inset 2px 0 0 var(--color-cyan)' : 'none',
-                  transition: 'background 150ms, box-shadow 150ms',
+                  borderBottom: '1px solid var(--color-border)',
+                  background: isSelected ? 'var(--color-bg-elevated)' : isContained ? 'rgba(34,197,94,0.04)' : 'transparent',
+                  boxShadow: isSelected ? 'inset 2px 0 0 var(--color-cyan), 0 4px 14px rgba(34,211,238,0.05)' : 'none',
+                  transition: 'background 250ms, box-shadow 250ms',
                 }}
-                whileHover={{ background: isSelected ? 'rgba(34,211,238,0.08)' : 'rgba(34,211,238,0.03)' }}
+                whileHover={{ background: isSelected ? 'var(--color-bg-elevated)' : 'rgba(34,211,238,0.05)', scale: 1.01 }}
               >
                 {/* User ID */}
                 <div style={{
@@ -126,7 +127,7 @@ export default function ThreatTable({ threats }: Props) {
                 }}>
                   {t.pqc_signed && (
                     <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" strokeWidth="2.5">
-                      <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                      <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
                     </svg>
                   )}
                   {t.user_id}

@@ -1,6 +1,6 @@
-# Aegis-Q — Git Upload & Clone Guide
+# Astra-Q — Git Upload & Clone Guide
 
-> Complete instructions to push Project Aegis-Q to GitHub and clone it on a new machine.
+> Complete instructions to push Project Astra-Q to GitHub and clone it on a new machine.
 
 ---
 
@@ -10,14 +10,14 @@
 
 1. Go to [https://github.com/new](https://github.com/new)
 2. Fill in:
-   - **Repository name:** `aegis-q`
+   - **Repository name:** `Astra-Q`
    - **Description:** `Quantum-Hardened Insider Threat Detection Platform`
    - **Visibility:** Private *(recommended — contains security architecture)*
    - ✅ **Do NOT** initialize with README, .gitignore, or license (you already have them)
 3. Click **Create repository**
 4. Copy the remote URL shown — it will look like:
    ```
-   https://github.com/YOUR_USERNAME/aegis-q.git
+   https://github.com/YOUR_USERNAME/Astra-Q.git
    ```
 
 ---
@@ -78,7 +78,7 @@ git status
 ### Step 5: Create the Initial Commit
 
 ```powershell
-git commit -m "feat: initial Aegis-Q implementation
+git commit -m "feat: initial Astra-Q implementation
 
 - Dual-engine AI: HeteroGCN (Engine A) + Transformer (Engine B)
 - Focal Loss FL(p_t) = -α_t·(1-p_t)²·log(p_t), γ=2.0
@@ -96,7 +96,7 @@ git commit -m "feat: initial Aegis-Q implementation
 
 ```powershell
 # Replace YOUR_USERNAME with your GitHub username
-git remote add origin https://github.com/YOUR_USERNAME/aegis-q.git
+git remote add origin https://github.com/YOUR_USERNAME/Astra-Q.git
 
 # Push to GitHub
 git push -u origin main
@@ -108,10 +108,10 @@ If prompted, sign in with your GitHub credentials (or use a Personal Access Toke
 
 ### Step 7: Verify on GitHub
 
-1. Open `https://github.com/YOUR_USERNAME/aegis-q`
+1. Open `https://github.com/YOUR_USERNAME/Astra-Q`
 2. Confirm you see the project structure:
    ```
-   aegis-q/
+   Astra-Q/
    ├── backend/
    ├── frontend/
    ├── infra/
@@ -130,12 +130,12 @@ If prompted, sign in with your GitHub credentials (or use a Personal Access Toke
 
 ```bash
 # HTTPS (recommended for most users)
-git clone https://github.com/YOUR_USERNAME/aegis-q.git
+git clone https://github.com/YOUR_USERNAME/Astra-Q.git
 
 # SSH (if you have SSH keys set up)
-git clone git@github.com:YOUR_USERNAME/aegis-q.git
+git clone git@github.com:YOUR_USERNAME/Astra-Q.git
 
-cd aegis-q
+cd Astra-Q
 ```
 
 ---
@@ -335,3 +335,4 @@ Go to **Settings → Secrets and variables → Actions** and add:
 | `DATABASE_URL` | Your production DB URL |
 | `REDIS_URL` | Your production Redis URL |
 | `PQC_MODE` | `production` (when liboqs is available) |
+

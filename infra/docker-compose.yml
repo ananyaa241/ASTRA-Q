@@ -148,8 +148,10 @@ services:
       REDIS_URL: redis://redis:6379
       # DATABASE_URL must be constructed from environment; do not hardcode passwords.
       DATABASE_URL: postgresql+asyncpg://aegis:${POSTGRES_PASSWORD}@postgres:5432/aegisq
+      # Key-encryption-key for PQC private key at-rest encryption (do NOT commit)
+      AEGIS_KEK: ${AEGIS_KEK}
       DATASET_PATH: /app/dataset
-      PQC_MODE: placeholder
+      PQC_MODE: production
       LOG_LEVEL: INFO
     volumes:
       - ../dataset:/app/dataset:ro
@@ -179,8 +181,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://backend:8000
-      NEXT_PUBLIC_WS_URL: ws://backend:8000
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_WS_URL: ws://localhost:8000
     depends_on:
       backend:
         condition: service_healthy

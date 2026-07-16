@@ -1,4 +1,4 @@
-"""Aegis-Q API: PQC Audit Trail Endpoints"""
+"""Astra-Q API: PQC Audit Trail Endpoints"""
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
@@ -139,3 +139,4 @@ def _synthetic_audit_entries(limit: int) -> List[AuditEntry]:
             is_verified=True,
         ))
     return entries
+

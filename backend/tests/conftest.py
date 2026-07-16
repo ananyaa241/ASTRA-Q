@@ -1,5 +1,5 @@
 """
-Pytest fixtures shared across the Aegis-Q test suite.
+Pytest fixtures shared across the Astra-Q test suite.
 """
 import pytest
 import torch
@@ -27,3 +27,4 @@ def balanced_batch():
     logits = torch.randn(64)
     labels = (torch.rand(64) > 0.5).float()
     return logits, labels
+

@@ -1,10 +1,10 @@
 """
-Aegis-Q PQC: ML-DSA-87 Digital Signature
+Astra-Q PQC: ML-DSA-87 Digital Signature
 ==========================================
 Implements FIPS 204 ML-DSA-87 (Module Lattice Digital Signature Algorithm)
 for cryptographic signing of all security alerts and containment actions.
 
-Every threat alert emitted by Aegis-Q is signed with ML-DSA-87, providing:
+Every threat alert emitted by Astra-Q is signed with ML-DSA-87, providing:
   - Non-repudiation: Analyst/system action is cryptographically provable
   - Integrity: Alert payload cannot be modified in transit
   - Quantum resistance: Secure against Shor's algorithm / quantum adversaries
@@ -285,3 +285,4 @@ def get_dsa() -> MLDSA87:
     if _dsa_instance is None:
         _dsa_instance = MLDSA87()
     return _dsa_instance
+

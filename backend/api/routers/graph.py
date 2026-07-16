@@ -1,4 +1,4 @@
-"""Aegis-Q API: Graph Topology Endpoints (for D3 visualization)"""
+"""Astra-Q API: Graph Topology Endpoints (for D3 visualization)"""
 from __future__ import annotations
 
 import random
@@ -224,3 +224,4 @@ def _synthetic_graph(limit: int) -> GraphTopology:
         node_count=len(nodes), edge_count=len(edges),
         anomalous_edge_count=sum(1 for e in edges if e.is_anomalous),
     )
+

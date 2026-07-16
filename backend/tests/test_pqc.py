@@ -96,7 +96,7 @@ class TestMLDSA87:
 
     def test_sign_verify_roundtrip(self, dsa, keypair):
         """Sign + verify should succeed for valid message."""
-        message = b"Aegis-Q threat alert payload v1.0"
+        message = b"Astra-Q threat alert payload v1.0"
         signature = dsa.sign(message, keypair.signing_key)
         assert len(signature) > 0
         is_valid = dsa.verify(message, signature, keypair.verify_key)
@@ -236,3 +236,4 @@ class TestPQCAuditLogger:
 
         is_valid = audit.verify_entry(entry, kp.verify_key)
         assert not is_valid, "Tampered entry should fail verification"
+

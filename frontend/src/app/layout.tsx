@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           overflow: 'hidden',
           margin: 0,
           padding: 0,
-          background: '#070b14',
+          background: 'var(--color-bg-base)',
         }}
       >
         <AuthContextProvider>

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Kafka topic initialization script for Aegis-Q
+# Kafka topic initialization script for Astra-Q
 # Creates all required topics with production-grade settings
 
 KAFKA_HOST=${KAFKA_BOOTSTRAP_SERVERS:-kafka:9092}
@@ -33,3 +33,4 @@ for topic in "${TOPICS[@]}"; do
 done
 
 echo "[Kafka Init] All topics ready."
+

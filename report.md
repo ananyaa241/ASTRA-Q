@@ -1,8 +1,8 @@
 # Project Title
-**Aegis-Q: Quantum-Hardened Insider Threat Detection Platform**
+**Astra-Q: Quantum-Hardened Insider Threat Detection Platform**
 
 ## Abstract
-Aegis-Q is an advanced Security Operations Center (SOC) platform designed to detect insider threats in real-time while safeguarding its audit trails against future quantum computing attacks. By leveraging a dual-engine AI architecture—combining a Heterogeneous Graph Convolutional Network (HeteroGCN) and a Sequential Causal Transformer—the system accurately identifies lateral movement and behavioral anomalies from highly imbalanced enterprise event logs (e.g., CERT r4.2 dataset). To ensure the non-repudiation and integrity of security events, Aegis-Q integrates Post-Quantum Cryptography (ML-DSA-87 and ML-KEM-1024), cryptographically signing all critical audit logs. The platform features an ultra-responsive, viewport-locked "Dark Glass" dashboard that visualizes entity relationships and threat metrics with sub-35ms inference latency.
+Astra-Q is an advanced Security Operations Center (SOC) platform designed to detect insider threats in real-time while safeguarding its audit trails against future quantum computing attacks. By leveraging a dual-engine AI architecture—combining a Heterogeneous Graph Convolutional Network (HeteroGCN) and a Sequential Causal Transformer—the system accurately identifies lateral movement and behavioral anomalies from highly imbalanced enterprise event logs (e.g., CERT r4.2 dataset). To ensure the non-repudiation and integrity of security events, Astra-Q integrates Post-Quantum Cryptography (ML-DSA-87 and ML-KEM-1024), cryptographically signing all critical audit logs. The platform features an ultra-responsive, viewport-locked "Dark Glass" dashboard that visualizes entity relationships and threat metrics with sub-35ms inference latency.
 
 ## Problem Statement
 Insider threats remain one of the most challenging vectors in cybersecurity due to the extreme class imbalance between normal user behavior and malicious activities. Traditional rule-based systems generate excessive false positives, leading to alert fatigue among SOC analysts. Furthermore, the impending arrival of Cryptographically Relevant Quantum Computers (CRQCs) threatens the integrity of historical audit logs, as classical digital signatures (like RSA and ECC) can be broken, allowing adversaries to tamper with evidence retrospectively.
@@ -26,7 +26,7 @@ The project encompasses a complete full-stack implementation, including:
 Existing SOC and SIEM (Security Information and Event Management) platforms heavily rely on static rule sets (e.g., Sigma rules) or basic anomaly detection baselines. They often evaluate events in isolation, failing to capture complex, multi-stage attacks like lateral movement. Additionally, current systems rely on classical cryptographic standards (RSA/ECC) for logging, rendering their audit trails vulnerable to future quantum decryption (Store Now, Decrypt Later attacks).
 
 ## Proposed System
-Aegis-Q proposes a paradigm shift by integrating:
+Astra-Q proposes a paradigm shift by integrating:
 1.  **Context-Aware AI:** Using HeteroGCN to map the topology of users, devices, and files, combined with a Transformer to model the chronological sequence of events.
 2.  **PQC Integration:** Applying ML-DSA-87 signatures to append-only database records.
 3.  **Focal Loss Optimization:** Training models to explicitly focus on the rare, hard-to-classify malicious events rather than the overwhelming majority of benign events.
@@ -118,7 +118,7 @@ Implementation followed a strict microservices approach via `docker-compose`. Th
 *   **Frontend Testing:** Manual UI verification confirming hydration match between SSR and Client, correct CSS animation rendering, and fallback to Demo Mode data when the backend is offline.
 
 ## Results
-Aegis-Q successfully demonstrates a fully operational, real-time threat detection pipeline. The UI renders 100+ graph nodes smoothly, the PQC audit trail successfully signs and verifies database entries, and the demo-mode fallback provides a seamless experience during backend downtime.
+Astra-Q successfully demonstrates a fully operational, real-time threat detection pipeline. The UI renders 100+ graph nodes smoothly, the PQC audit trail successfully signs and verifies database entries, and the demo-mode fallback provides a seamless experience during backend downtime.
 
 ## Performance Evaluation
 *   **Latency:** The backend successfully processes inference requests well under the 35ms target. Redis cache lookups average under 1ms.
@@ -139,10 +139,11 @@ Aegis-Q successfully demonstrates a fully operational, real-time threat detectio
 3.  **Advanced Temporal Querying:** Allow analysts to query the graph database for historical snapshots (e.g., "Show graph state 10 minutes prior to the alert").
 
 ## Conclusion
-Aegis-Q successfully bridges the gap between advanced AI threat detection and future-proof cryptographic auditing. By combining HeteroGCN, Sequential Transformers, and Post-Quantum Cryptography into a highly optimized, open-source stack, it provides a robust blueprint for next-generation Security Operations Centers.
+Astra-Q successfully bridges the gap between advanced AI threat detection and future-proof cryptographic auditing. By combining HeteroGCN, Sequential Transformers, and Post-Quantum Cryptography into a highly optimized, open-source stack, it provides a robust blueprint for next-generation Security Operations Centers.
 
 ## References
 1.  NIST FIPS 203 (ML-KEM) & FIPS 204 (ML-DSA) Draft Standards.
 2.  PyTorch Geometric Documentation: Graph Neural Networks for Heterogeneous Graphs.
 3.  CERT Insider Threat Dataset v4.2, Software Engineering Institute, Carnegie Mellon University.
 4.  Open Quantum Safe (OQS) Project (`liboqs`).
+

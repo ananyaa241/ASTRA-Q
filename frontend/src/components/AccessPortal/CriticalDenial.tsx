@@ -20,12 +20,12 @@ export default function CriticalDenial({ onBack }: Props) {
         width: '100%',
         maxWidth: '440px',
         margin: '0 auto',
-        background: 'rgba(239,68,68,0.05)',
+        background: 'rgba(255,255,255,0.8)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
         border: '1px solid rgba(239,68,68,0.45)',
         borderRadius: '16px',
-        boxShadow: '0 20px 40px rgba(0,0,0,0.6), inset 0 0 80px rgba(239,68,68,0.03), 0 0 40px rgba(239,68,68,0.15)',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.05), inset 0 0 80px rgba(239,68,68,0.03), 0 0 40px rgba(239,68,68,0.15)',
         animation: 'pulse-critical 2.5s ease-in-out infinite',
         textAlign: 'center',
       }}>
@@ -44,9 +44,9 @@ export default function CriticalDenial({ onBack }: Props) {
           boxShadow: '0 0 32px rgba(239,68,68,0.3)',
         }}>
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          <line x1="9" y1="9" x2="15" y2="15"/>
-          <line x1="15" y1="9" x2="9" y2="15"/>
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <line x1="9" y1="9" x2="15" y2="15" />
+          <line x1="15" y1="9" x2="9" y2="15" />
         </svg>
       </motion.div>
 
@@ -65,7 +65,7 @@ export default function CriticalDenial({ onBack }: Props) {
 
       {/* Subtext */}
       <p style={{
-        color: 'rgba(255,255,255,0.65)',
+        color: 'rgba(0,0,0,0.65)',
         fontSize: '13px',
         lineHeight: '1.7',
         marginBottom: '24px',

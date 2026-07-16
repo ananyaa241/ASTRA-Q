@@ -1,4 +1,4 @@
-"""Aegis-Q API: Threat Score Endpoints"""
+"""Astra-Q API: Threat Score Endpoints"""
 from __future__ import annotations
 
 import time
@@ -224,3 +224,4 @@ def _synthetic_threats(limit: int) -> List[ThreatSession]:
 
     threats.sort(key=lambda t: t.fused_score, reverse=True)
     return threats
+

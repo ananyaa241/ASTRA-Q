@@ -1,4 +1,4 @@
-// Aegis-Q TypeScript Type Definitions
+// Astra-Q TypeScript Type Definitions
 
 export type RiskTier = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
 
@@ -103,13 +103,14 @@ export type ContainmentAction = 'ISOLATE' | 'LOCK_ACCOUNT' | 'MONITOR_ENHANCED' 
 // Colour utilities
 export const TIER_COLORS: Record<RiskTier, { bg: string; text: string; border: string; glow: string }> = {
   CRITICAL: { bg: 'rgba(239,68,68,0.15)', text: '#ef4444', border: '#ef4444', glow: '0 0 20px rgba(239,68,68,0.4)' },
-  HIGH:     { bg: 'rgba(249,115,22,0.15)', text: '#f97316', border: '#f97316', glow: '0 0 20px rgba(249,115,22,0.35)' },
-  MEDIUM:   { bg: 'rgba(234,179,8,0.15)', text: '#eab308', border: '#eab308', glow: '0 0 16px rgba(234,179,8,0.3)' },
-  LOW:      { bg: 'rgba(34,197,94,0.10)', text: '#22c55e', border: '#22c55e', glow: '0 0 12px rgba(34,197,94,0.2)' },
+  HIGH: { bg: 'rgba(249,115,22,0.15)', text: '#f97316', border: '#f97316', glow: '0 0 20px rgba(249,115,22,0.35)' },
+  MEDIUM: { bg: 'rgba(234,179,8,0.15)', text: '#eab308', border: '#eab308', glow: '0 0 16px rgba(234,179,8,0.3)' },
+  LOW: { bg: 'rgba(34,197,94,0.10)', text: '#22c55e', border: '#22c55e', glow: '0 0 12px rgba(34,197,94,0.2)' },
 };
 
 export const NODE_COLORS: Record<GraphNode['type'], string> = {
-  USER:  '#22d3ee',   // cyan
-  PC:    '#f59e0b',   // amber
-  FILE:  '#f43f5e',   // rose
+  USER: '#0369a1',   // sky-700
+  PC: '#b45309',   // amber-700
+  FILE: '#be123c',   // rose-700
 };
+

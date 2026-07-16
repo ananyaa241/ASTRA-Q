@@ -1,5 +1,5 @@
 """
-Aegis-Q Redis Feature Cache
+Astra-Q Redis Feature Cache
 ==============================
 Implements a sub-2ms feature hydration cache using Redis.
 
@@ -323,3 +323,4 @@ class SyncFeatureCache:
             return self._client.ping()
         except Exception:
             return False
+

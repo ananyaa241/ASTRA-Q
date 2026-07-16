@@ -1,5 +1,5 @@
 """
-Aegis-Q PQC Audit Log
+Astra-Q PQC Audit Log
 =======================
 Cryptographically-signed, append-only audit trail for all system actions.
 
@@ -293,3 +293,4 @@ def get_audit_logger() -> PQCAuditLogger:
     if _audit_logger is None:
         _audit_logger = PQCAuditLogger()
     return _audit_logger
+

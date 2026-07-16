@@ -1,5 +1,5 @@
 """
-Aegis-Q Kafka Producer
+Astra-Q Kafka Producer
 ========================
 Simulates real-time event streaming from the static CERT r4.2 dataset.
 
@@ -126,8 +126,14 @@ class AegisCERTProducer:
         Runs synchronously until dataset exhausted.
         """
         self.connect()
-        reader = CERTDatasetReader(self.dataset_path)
         self._start_time = time.time()
+
+        if self.sample and not (Path(self.dataset_path) / "logon.csv").exists():
+            logger.warning("[KafkaProducer] Dataset CSVs not found. Initializing Endless Synthetic Telemetry Stream!")
+            self._synthetic_stream()
+            return
+
+        reader = CERTDatasetReader(self.dataset_path)
 
         logger.info(f"[KafkaProducer] Starting CERT r4.2 streaming (sample={self.sample})")
 
@@ -150,6 +156,57 @@ class AegisCERTProducer:
 
         self._log_stats()
         self.disconnect()
+
+    def _synthetic_stream(self) -> None:
+        """Endless generator of synthetic CERT events for DEMO/Sample mode."""
+        import random
+        from datetime import timedelta
+        
+        users = [f"usr_priv_{str(i).zfill(3)}" for i in range(1, 25)]
+        pcs = [f"PC-{str(i).zfill(4)}" for i in range(1, 15)]
+        topics_src = ["logon", "device", "file", "email", "http"]
+        
+        logger.info("[KafkaProducer] Synthetic generator running (Ctrl+C to stop)...")
+        while True:
+            src = random.choice(topics_src)
+            uid = random.choice(users)
+            dt = datetime.now()
+            
+            event = {
+                "event_id": f"SYN-{random.randint(10000, 99999)}",
+                "event_type": src,
+                "event_time": dt,
+                "user_id": uid,
+                "pc_id": random.choice(pcs),
+                "minutes_from_midnight": dt.hour * 60 + dt.minute,
+                "is_after_hours": dt.hour < 8 or dt.hour > 18,
+                "is_weekend": dt.weekday() >= 5,
+                "source": src,
+            }
+            
+            # Inject context specifics
+            if src == "file":
+                event["hex_header"] = "FFD8FFE0" if random.random() > 0.1 else "4D5A9000"
+                event["filename"] = "project_x_alpha.docx" if random.random() > 0.1 else "malicious_payload.exe"
+                event["is_suspicious_file"] = event["hex_header"] == "4D5A9000" and event["filename"].endswith(".docx")
+            elif src == "email":
+                event["is_external"] = random.random() > 0.7
+                event["attachment_count"] = random.randint(0, 3)
+            elif src == "http":
+                event["domain"] = "internal.dtaa.com"
+                event["is_suspicious_domain"] = random.random() > 0.95
+                if event["is_suspicious_domain"]:
+                    event["domain"] = "wikileaks.org"
+            
+            try:
+                self._producer.send(TOPICS[src], key=uid, value=event)
+                self._total_sent += 1
+                if self._total_sent % 100 == 0:
+                    self._log_throughput("synthetic", self._total_sent)
+            except KafkaError as e:
+                logger.error(f"[KafkaProducer] Synthetic send failed: {e}")
+                
+            time.sleep(self.delay if self.delay > 0 else 0.4)
 
     def _stream_source(
         self,
@@ -239,3 +296,4 @@ if __name__ == "__main__":
     producer.speed = speed
     producer.delay = REPLAY_SPEEDS.get(speed, 0.0)
     producer.run()
+

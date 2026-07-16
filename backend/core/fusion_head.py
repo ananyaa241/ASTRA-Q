@@ -1,5 +1,5 @@
 """
-Aegis-Q Fusion Head
+Astra-Q Fusion Head
 =====================
 Combines threat scores from Engine A (HeteroGCN) and Engine B (Sequential
 Transformer) into a unified, ranked threat assessment.
@@ -145,3 +145,4 @@ class ThreatRanker(nn.Module):
 
     def get_num_parameters(self) -> int:
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
+

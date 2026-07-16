@@ -1,5 +1,5 @@
 """
-Aegis-Q Feature Builder
+Astra-Q Feature Builder
 =========================
 Constructs 47-dimensional user behavioral feature vectors from raw events,
 hydrates them into the Redis feature cache, and assembles graph neighborhoods
@@ -296,3 +296,4 @@ class UserFeatureBuilder:
             return 0.0
         z = (current_count - mu) / sigma
         return float(np.tanh(z / 3.0))  # Squash to [-1, 1]
+

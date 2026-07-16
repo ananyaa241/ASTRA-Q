@@ -1,5 +1,5 @@
 """
-Aegis-Q Focal Loss Implementation
+Astra-Q Focal Loss Implementation
 ==================================
 Implements the exact formula from the specification:
 
@@ -173,3 +173,4 @@ def get_focal_loss(stable: bool = True, **kwargs) -> FocalLoss:
     """Factory function. Returns numerically stable variant by default."""
     cls = BinaryFocalWithLogitsLoss if stable else FocalLoss
     return cls(gamma=FocalLoss.GAMMA, **kwargs)
+

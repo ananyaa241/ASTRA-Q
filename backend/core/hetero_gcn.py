@@ -1,5 +1,5 @@
 """
-Aegis-Q Engine A: Heterogeneous Graph Convolutional Network (HeteroGCN)
+Astra-Q Engine A: Heterogeneous Graph Convolutional Network (HeteroGCN)
 =========================================================================
 Processes user-machine-file relational topologies to detect lateral movement
 and anomalous access patterns.
@@ -228,3 +228,4 @@ def build_hetero_gcn(
     n_params = model.get_num_parameters()
     print(f"[HeteroGCN] Built model with {n_params:,} trainable parameters")
     return model
+

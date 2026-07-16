@@ -1,5 +1,5 @@
 """
-Aegis-Q API Middleware: PQC Transport Enforcement
+Astra-Q API Middleware: PQC Transport Enforcement
 ===================================================
 Validates that all API responses include the X-PQC-Algorithm header,
 and optionally enforces that incoming requests carry a valid ML-KEM-1024
@@ -35,7 +35,7 @@ class PQCHeaderMiddleware(BaseHTTPMiddleware):
       X-FIPS-Standards: FIPS-203, FIPS-204
 
     This allows downstream systems (SIEM, load balancer) to verify
-    that all Aegis-Q API traffic is quantum-hardened at the protocol layer.
+    that all Astra-Q API traffic is quantum-hardened at the protocol layer.
     """
 
     def __init__(self, app: ASGIApp) -> None:
@@ -55,3 +55,4 @@ class PQCHeaderMiddleware(BaseHTTPMiddleware):
             response.headers["X-Aegis-Version"] = "1.0.0"
 
         return response
+

@@ -1,6 +1,6 @@
-# Aegis-Q Quick Start Commands
+# Astra-Q Quick Start Commands
 
-Use these commands to quickly spin up the entire Aegis-Q platform after the initial setup is complete.
+Use these commands to quickly spin up the entire Astra-Q platform after the initial setup is complete.
 
 ## 1. Start Infrastructure & Backend
 Boot up the PostgreSQL, Redis, Kafka, Zookeeper, and the FastAPI backend containers.
@@ -31,3 +31,4 @@ docker compose exec -d backend python -m backend.ingestion.kafka_producer --samp
 - **View backend logs**: `docker compose -f infra/docker-compose.yml logs -f backend`
 - **Check service status**: `docker compose -f infra/docker-compose.yml ps`
 - **Stop all services**: `docker compose -f infra/docker-compose.yml down`
+

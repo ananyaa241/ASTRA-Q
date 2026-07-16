@@ -12,7 +12,7 @@ export interface AuthSuccessData {
 
 interface Props {
   onSuccess: (data: AuthSuccessData) => void;
-  onMfaRequired: (userId: string) => void;
+  onMfaRequired: (userId: string, password: string) => void;
   onCriticalDenied: () => void;
 }
 
@@ -26,8 +26,8 @@ interface EvalStep {
 }
 
 const STEP_COLORS: Record<StepStatus, string> = {
-  pending:  'var(--color-text-muted)',
-  active:   'var(--color-cyan)',
+  pending: 'var(--color-text-muted)',
+  active: 'var(--color-cyan)',
   complete: 'var(--color-low)',
 };
 
@@ -45,7 +45,7 @@ function RiskEvalStepper({ steps }: { steps: EvalStep[] }) {
           }}>
             {s.status === 'complete' && (
               <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#04070d" strokeWidth="3">
-                <polyline points="20 6 9 17 4 12"/>
+                <polyline points="20 6 9 17 4 12" />
               </svg>
             )}
             {s.status === 'active' && (
@@ -82,26 +82,26 @@ function RiskEvalStepper({ steps }: { steps: EvalStep[] }) {
 const AUTH_URL = '/api/auth/request-access';
 
 export default function LoginForm({ onSuccess, onMfaRequired, onCriticalDenied }: Props) {
-  const [userId, setUserId]       = useState('');
-  const [password, setPassword]   = useState('');
-  const [error, setError]         = useState('');
-  const [loading, setLoading]     = useState(false);
+  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
 
   // Risk evaluation stepper state
   const [evalSteps, setEvalSteps] = useState<EvalStep[]>([
-    { label: 'Identity Submitted',       status: 'pending' },
-    { label: 'Evaluating Risk Profile...',status: 'pending' },
-    { label: 'Awaiting Authorization',   status: 'pending' },
+    { label: 'Identity Submitted', status: 'pending' },
+    { label: 'Evaluating Risk Profile...', status: 'pending' },
+    { label: 'Awaiting Authorization', status: 'pending' },
   ]);
 
   // Reset stepper when not loading
   useEffect(() => {
     if (!loading) {
       setEvalSteps([
-        { label: 'Identity Submitted',       status: 'pending' },
-        { label: 'Evaluating Risk Profile...',status: 'pending' },
-        { label: 'Awaiting Authorization',   status: 'pending' },
+        { label: 'Identity Submitted', status: 'pending' },
+        { label: 'Evaluating Risk Profile...', status: 'pending' },
+        { label: 'Awaiting Authorization', status: 'pending' },
       ]);
     }
   }, [loading]);
@@ -145,7 +145,7 @@ export default function LoginForm({ onSuccess, onMfaRequired, onCriticalDenied }
       } else if (res.status === 401) {
         const detail = (data.detail as string) ?? '';
         if (detail.startsWith('MFA Required')) {
-          onMfaRequired(userId);
+          onMfaRequired(userId, password);
         } else {
           setError(detail || 'Authentication failed. Check credentials.');
         }
@@ -195,8 +195,8 @@ export default function LoginForm({ onSuccess, onMfaRequired, onCriticalDenied }
           marginBottom: '16px', boxShadow: '0 0 20px rgba(34,211,238,0.2)',
         }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-cyan, #22d3ee)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
         </div>
         <h2 style={{ color: '#fff', fontSize: '24px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '8px' }}>ASTRA-Q Gateway</h2>
@@ -239,7 +239,7 @@ export default function LoginForm({ onSuccess, onMfaRequired, onCriticalDenied }
             display: 'flex', alignItems: 'center', gap: '8px',
           }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             {error}
           </div>
@@ -264,7 +264,8 @@ export default function LoginForm({ onSuccess, onMfaRequired, onCriticalDenied }
         {loading && <RiskEvalStepper steps={evalSteps} />}
       </form>
 
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes eval-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }
       `}} />
     </div>

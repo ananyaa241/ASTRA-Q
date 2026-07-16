@@ -1,5 +1,5 @@
 """
-Aegis-Q FastAPI Application
+Astra-Q FastAPI Application
 ==============================
 Main FastAPI application with:
   - Async database connection pool (SQLAlchemy + asyncpg)
@@ -27,7 +27,7 @@ from backend.cache.redis_cache import FeatureCache
 from backend.pqc.dsa import MLDSA87, get_dsa, load_dsa_keypair, save_dsa_keypair
 from backend.pqc.kem import MLKEM1024, get_kem, load_keypair, save_keypair
 from backend.pqc.audit_log import get_audit_logger, AuditActionType
-from backend.api.routers import threats, graph, audit, ws, auth
+from backend.api.routers import threats, graph, audit, ws, auth, chat
 from backend.api.middleware.pqc_middleware import PQCHeaderMiddleware
 
 logger = logging.getLogger(__name__)
@@ -81,7 +81,7 @@ _latency_samples: list[float] = []
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize all services on startup, clean up on shutdown."""
-    logger.info("🚀 Aegis-Q starting up...")
+    logger.info("🚀 Astra-Q starting up...")
 
     # Connect Redis
     await feature_cache.connect()
@@ -127,11 +127,11 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.warning(f"Could not write startup audit log: {e}")
 
-    logger.info("✅ Aegis-Q fully operational")
+    logger.info("✅ Astra-Q fully operational")
     yield
 
     # Shutdown
-    logger.info("🛑 Aegis-Q shutting down...")
+    logger.info("🛑 Astra-Q shutting down...")
     await feature_cache.disconnect()
     await engine.dispose()
     logger.info("✅ Cleanup complete")
@@ -141,7 +141,7 @@ async def lifespan(app: FastAPI):
 # FastAPI App
 # ─────────────────────────────────────────────────────────────────
 app = FastAPI(
-    title="Aegis-Q",
+    title="Astra-Q",
     description="Quantum-Hardened Insider Threat Detection Platform",
     version="1.0.0",
     docs_url="/docs",
@@ -152,7 +152,7 @@ app = FastAPI(
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://aegis-frontend:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -198,6 +198,7 @@ app.include_router(graph.router, prefix="/api/graph", tags=["Graph"])
 app.include_router(audit.router, prefix="/api/audit", tags=["Audit"])
 app.include_router(ws.router, prefix="/ws", tags=["WebSocket"])
 app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
+app.include_router(chat.router, prefix="/api/chat", tags=["Chat"])
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -209,7 +210,7 @@ async def health_check():
     cache_stats = feature_cache.get_latency_stats()
     return {
         "status": "healthy",
-        "service": "aegis-q",
+        "service": "Astra-Q",
         "version": "1.0.0",
         "cache_p99_ms": cache_stats.get("p99", 0),
         "cache_hit_rate": cache_stats.get("hit_rate", 0),
@@ -256,3 +257,4 @@ async def get_metrics():
             "mode": os.getenv("PQC_MODE", "placeholder"),
         },
     }
+

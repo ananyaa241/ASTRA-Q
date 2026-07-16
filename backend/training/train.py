@@ -1,5 +1,5 @@
 """
-Aegis-Q Training Loop
+Astra-Q Training Loop
 =======================
 Complete training pipeline for the dual-engine AI system (Engine A + Engine B)
 using Focal Loss for the dense-needles insider threat detection task.
@@ -170,7 +170,7 @@ def train(
         training_report: dict with loss history, latency metrics, and FL proof
     """
     logger.info("=" * 70)
-    logger.info("AEGIS-Q TRAINING LOOP v1.0")
+    logger.info("Astra-Q TRAINING LOOP v1.0")
     logger.info(f"Focal Loss: FL(p_t) = -α_t·(1-p_t)^γ·log(p_t), γ={FocalLoss.GAMMA}")
     logger.info(f"Device: {device} | Epochs: {n_epochs} | Batch: {batch_size}")
     logger.info("=" * 70)
@@ -392,7 +392,7 @@ def _build_session_windows(
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    parser = argparse.ArgumentParser(description="Aegis-Q Training")
+    parser = argparse.ArgumentParser(description="Astra-Q Training")
     parser.add_argument("--dataset", default="./dataset/r4.2")
     parser.add_argument("--answers", default="./dataset/answers")
     parser.add_argument("--output", default="./models")
@@ -413,3 +413,4 @@ if __name__ == "__main__":
         device=args.device,
         sample=args.sample,
     )
+

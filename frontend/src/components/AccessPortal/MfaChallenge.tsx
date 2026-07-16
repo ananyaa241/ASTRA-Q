@@ -13,8 +13,8 @@ interface Props {
 const AUTH_URL = '/api/auth/request-access';
 
 export default function MfaChallenge({ userId, password, onSuccess, onCancel }: Props) {
-  const [totp, setTotp]     = useState('');
-  const [error, setError]   = useState('');
+  const [totp, setTotp] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [focused, setFocused] = useState(false);
 
@@ -56,12 +56,12 @@ export default function MfaChallenge({ userId, password, onSuccess, onCancel }: 
       width: '100%',
       maxWidth: '440px',
       margin: '0 auto',
-      background: 'rgba(245,158,11,0.03)',
+      background: 'rgba(255,255,255,0.8)',
       backdropFilter: 'blur(24px)',
       WebkitBackdropFilter: 'blur(24px)',
-      border: '1px solid rgba(245,158,11,0.4)',
+      border: '1px solid rgba(0,0,0,0.1)',
       borderRadius: '16px',
-      boxShadow: '0 20px 40px rgba(0,0,0,0.5), inset 0 0 80px rgba(245,158,11,0.05), 0 0 30px rgba(245,158,11,0.1)',
+      boxShadow: '0 20px 40px rgba(0,0,0,0.05), inset 0 0 80px rgba(245,158,11,0.02)',
     }}>
       <div style={{ textAlign: 'center', marginBottom: '32px' }}>
         <div style={{
@@ -71,15 +71,15 @@ export default function MfaChallenge({ userId, password, onSuccess, onCancel }: 
           marginBottom: '16px', animation: 'pulse-amber 2s infinite',
         }}>
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
           </svg>
         </div>
-        <h2 style={{ color: '#f59e0b', fontSize: '24px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '8px' }}>Identity Verification</h2>
-        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', lineHeight: '1.5' }}>
+        <h2 style={{ color: '#d97706', fontSize: '24px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '8px' }}>Identity Verification</h2>
+        <p style={{ color: 'rgba(0,0,0,0.6)', fontSize: '13px', lineHeight: '1.5' }}>
           Anomaly detected in behavioral telemetry. Please provide your multi-factor authenticator code to proceed.
         </p>
         {/* Operator context */}
-        <p style={{ marginTop: 8, color: 'rgba(34,211,238,0.7)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>
+        <p style={{ marginTop: 8, color: 'rgba(2,132,199,0.9)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>
           Operator: {userId}
         </p>
       </div>
@@ -94,13 +94,13 @@ export default function MfaChallenge({ userId, password, onSuccess, onCancel }: 
             onBlur={() => setFocused(false)}
             style={{
               width: '100%', padding: '20px',
-              background: focused ? 'rgba(7,11,20,0.9)' : 'rgba(7,11,20,0.5)',
-              border: `1px solid ${focused ? '#f59e0b' : 'rgba(245,158,11,0.3)'}`,
-              color: '#f59e0b', borderRadius: '8px',
+              background: focused ? '#ffffff' : 'rgba(0,0,0,0.02)',
+              border: `1px solid ${focused ? '#f59e0b' : 'rgba(0,0,0,0.15)'}`,
+              color: '#d97706', borderRadius: '8px',
               fontSize: '32px', letterSpacing: '0.4em', textAlign: 'center',
               fontWeight: '700', outline: 'none',
               transition: 'all 0.3s ease',
-              boxShadow: focused ? '0 0 20px rgba(245,158,11,0.2)' : 'none',
+              boxShadow: focused ? '0 0 20px rgba(245,158,11,0.15)' : 'none',
               fontFamily: 'var(--font-mono, monospace)',
               boxSizing: 'border-box',
             }}
@@ -131,12 +131,12 @@ export default function MfaChallenge({ userId, password, onSuccess, onCancel }: 
             type="button"
             onClick={onCancel}
             style={{
-              flex: 1, padding: '14px', background: 'rgba(255,255,255,0.05)', color: '#fff',
-              border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', fontWeight: '600',
+              flex: 1, padding: '14px', background: 'rgba(0,0,0,0.05)', color: '#0f172a',
+              border: '1px solid rgba(0,0,0,0.1)', borderRadius: '8px', fontWeight: '600',
               cursor: 'pointer', transition: 'all 0.2s', fontSize: 14,
             }}
-            onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-            onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+            onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.1)'}
+            onMouseOut={e => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
           >
             Abort
           </button>
@@ -157,7 +157,8 @@ export default function MfaChallenge({ userId, password, onSuccess, onCancel }: 
         </div>
       </form>
 
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes pulse-amber { 0% { box-shadow: 0 0 0 0 rgba(245,158,11,0.4); } 70% { box-shadow: 0 0 0 15px rgba(245,158,11,0); } 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); } }
       `}} />
     </div>

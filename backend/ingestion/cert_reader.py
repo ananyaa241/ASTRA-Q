@@ -1,5 +1,5 @@
 """
-Aegis-Q CERT r4.2 Dataset Reader
+Astra-Q CERT r4.2 Dataset Reader
 ===================================
 Streams all CERT Insider Threat Dataset r4.2 CSV files with:
   - Chunked reading for large files (http.csv ~14GB, email.csv ~1.3GB)
@@ -343,3 +343,4 @@ class CERTDatasetReader:
         df = pd.read_csv(fpath)
         logger.info(f"[CERTReader] Loaded {len(df)} insider threat ground truth labels")
         return df
+

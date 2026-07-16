@@ -7,8 +7,12 @@ from backend.utils.vault_client import get_secret_kv_v2
 def _kek_from_env_or_vault() -> Optional[bytes]:
     """Return a KEK (Fernet key) from env `AEGIS_KEK` or from Vault path `secret/data/aegis/kek` key `kek`."""
     kek = os.getenv('AEGIS_KEK')
-    if kek:
-        return kek.encode()
+    if kek and kek != "${AEGIS_KEK}" and len(kek) >= 32:
+        try:
+            Fernet(kek.encode()) # validate
+            return kek.encode()
+        except:
+            pass
 
     # Try Vault KV v2 path
     try:

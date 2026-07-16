@@ -1,5 +1,5 @@
 """
-Aegis-Q File Hex Header Validator
+Astra-Q File Hex Header Validator
 ====================================
 Validates file content headers against expected magic bytes for filename extensions.
 
@@ -175,3 +175,4 @@ class FileHexValidator:
                 return 3.5  # Strong indicator: likely keylogger/malware
 
         return 2.0  # Generic mismatch
+

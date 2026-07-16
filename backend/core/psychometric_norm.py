@@ -1,5 +1,5 @@
 """
-Aegis-Q Psychometric Normalization
+Astra-Q Psychometric Normalization
 ====================================
 Min-Max normalization for Big-5 personality traits (O, C, E, A, N).
 
@@ -187,3 +187,4 @@ def load_and_normalize_psychometric(
     )
 
     return normalized_df, trait_tensor, normalizer
+

@@ -1,4 +1,4 @@
-// Aegis-Q API Client
+// Astra-Q API Client
 
 import type {
   ThreatSession,
@@ -128,4 +128,5 @@ export async function requestAccess(
     body: JSON.stringify({ user_id: userId, password, totp_code: totpCode ?? null }),
   });
 }
+
 

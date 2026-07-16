@@ -17,19 +17,19 @@ interface WorkflowStep {
 }
 
 const STATE_COLOR: Record<StepState, string> = {
-  pending:  '#4a5568',
-  active:   '#22d3ee',
+  pending: '#4a5568',
+  active: '#22d3ee',
   complete: '#22c55e',
-  alert:    '#ef4444',
+  alert: '#ef4444',
 };
 
 function AccessWorkflowStepper({ steps }: { steps: WorkflowStep[] }) {
   return (
     <div style={{
       display: 'flex', alignItems: 'center', gap: 0,
-      marginBottom: '24px', padding: '12px 20px',
-      background: 'rgba(13,20,36,0.6)', backdropFilter: 'blur(12px)',
-      border: '1px solid rgba(34,211,238,0.1)', borderRadius: '10px',
+      marginBottom: '32px', padding: '12px 20px',
+      background: 'transparent',
+      borderBottom: '1px solid rgba(0,0,0,0.1)',
     }}>
       {steps.map((s, i) => (
         <div key={i} style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
@@ -38,8 +38,8 @@ function AccessWorkflowStepper({ steps }: { steps: WorkflowStep[] }) {
             width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
             border: `2px solid ${STATE_COLOR[s.state]}`,
             background: s.state === 'complete' ? STATE_COLOR.complete
-                      : s.state === 'alert'    ? STATE_COLOR.alert
-                      : 'transparent',
+              : s.state === 'alert' ? STATE_COLOR.alert
+                : 'transparent',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             transition: 'all 300ms',
             boxShadow: s.state === 'active' ? `0 0 12px ${STATE_COLOR.active}88` : 'none',
@@ -47,26 +47,26 @@ function AccessWorkflowStepper({ steps }: { steps: WorkflowStep[] }) {
           }}>
             {s.state === 'complete' && (
               <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#04070d" strokeWidth="3.5">
-                <polyline points="20 6 9 17 4 12"/>
+                <polyline points="20 6 9 17 4 12" />
               </svg>
             )}
             {s.state === 'alert' && (
               <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             )}
           </div>
           {/* Label */}
           <span style={{
-            fontSize: 9, fontFamily: 'JetBrains Mono, monospace',
-            color: STATE_COLOR[s.state], marginLeft: 5, whiteSpace: 'nowrap',
-            transition: 'color 300ms', fontWeight: s.state === 'active' ? 700 : 400,
+            fontSize: 10, fontFamily: 'var(--font-mono)',
+            color: STATE_COLOR[s.state], marginLeft: 8, whiteSpace: 'nowrap',
+            transition: 'color 300ms', fontWeight: s.state === 'active' ? 500 : 400,
           }}>{s.label}</span>
           {/* Connector */}
           {i < steps.length - 1 && (
             <div style={{
               flex: 1, height: 1, marginLeft: 8, marginRight: 8,
-              background: s.state === 'complete' ? 'rgba(34,197,94,0.4)' : 'rgba(255,255,255,0.07)',
+              background: s.state === 'complete' ? 'rgba(34,197,94,0.4)' : 'rgba(0,0,0,0.1)',
               transition: 'background 400ms',
             }} />
           )}
@@ -81,13 +81,13 @@ function AccessWorkflowStepper({ steps }: { steps: WorkflowStep[] }) {
 type AuthState = 'login' | 'mfa' | 'critical_denied' | 'success';
 
 export default function AccessPortalPage() {
-  const router   = useRouter();
+  const router = useRouter();
   const { setSession } = useAuth();
 
   const [authState, setAuthState] = useState<AuthState>('login');
-  const [userId, setUserId]       = useState('');
-  const [password, setPassword]   = useState('');
-  const [mounted, setMounted]     = useState(false);
+  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
@@ -102,18 +102,18 @@ export default function AccessPortalPage() {
       state: authState === 'login'
         ? 'pending'
         : authState === 'critical_denied'
-        ? 'alert'
-        : authState === 'success'
-        ? 'complete'
-        : 'complete',
+          ? 'alert'
+          : authState === 'success'
+            ? 'complete'
+            : 'complete',
     },
     {
       label: 'Identity Verification',
       state: authState === 'mfa'
         ? 'active'
         : authState === 'success'
-        ? 'complete'
-        : 'pending',
+          ? 'complete'
+          : 'pending',
     },
   ];
 
@@ -167,16 +167,13 @@ export default function AccessPortalPage() {
     <div style={{
       position: 'fixed', inset: 0,
       display: 'flex', flexDirection: 'column',
-      background: '#04070d', zIndex: 1,
+      background: '#f8fafc', zIndex: 1,
       alignItems: 'center', justifyContent: 'center',
       overflow: 'hidden',
+      color: '#0f172a',
     }}>
-      {/* Premium Background Elements */}
-      <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '50%', height: '50%', background: 'radial-gradient(circle, rgba(34,211,238,0.08) 0%, rgba(4,7,13,0) 60%)', filter: 'blur(60px)', zIndex: -1 }} />
-      <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '50%', height: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, rgba(4,7,13,0) 60%)', filter: 'blur(60px)', zIndex: -1 }} />
-
-      {/* Grid Pattern */}
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '40px 40px', zIndex: -2 }} />
+      {/* Extreme smooth ambient lighting */}
+      <div style={{ position: 'absolute', top: '10%', left: '30%', width: '40%', height: '40%', background: 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(255,255,255,0) 70%)', filter: 'blur(100px)', zIndex: -1 }} />
 
       <div style={{ width: '100%', maxWidth: '520px', padding: '20px 20px' }}>
         {/* Workflow stepper at top */}
@@ -217,7 +214,8 @@ export default function AccessPortalPage() {
         {/* authState === 'success' shows nothing — router.push fires immediately */}
       </div>
 
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes fade-up { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes zoom-in { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
         @keyframes step-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.7;transform:scale(1.2)} }
@@ -261,12 +259,12 @@ interface LoginFormWithCaptureProps {
 }
 
 function LoginFormWithPasswordCapture({ onSuccess, onMfaRequired, onCriticalDenied, onPasswordChange }: LoginFormWithCaptureProps) {
-  const [userId, setUserId]       = useState('');
-  const [password, setPassword]   = useState('');
-  const [error, setError]         = useState('');
-  const [loading, setLoading]     = useState(false);
+  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
-  const [evalStep, setEvalStep]   = useState(0); // 0=none, 1=submitted, 2=evaluating, 3=authorizing
+  const [evalStep, setEvalStep] = useState(0); // 0=none, 1=submitted, 2=evaluating, 3=authorizing
 
   const handlePasswordChange = (val: string) => {
     setPassword(val);
@@ -318,12 +316,13 @@ function LoginFormWithPasswordCapture({ onSuccess, onMfaRequired, onCriticalDeni
 
   const inputStyle = (isFocused: boolean): React.CSSProperties => ({
     width: '100%', padding: '14px 16px',
-    background: isFocused ? 'rgba(7,11,20,0.95)' : 'rgba(7,11,20,0.6)',
-    border: `1px solid ${isFocused ? 'rgba(34,211,238,0.6)' : 'rgba(255,255,255,0.1)'}`,
-    color: '#fff', borderRadius: '8px', fontSize: '14px', outline: 'none',
-    transition: 'all 0.3s ease',
-    boxShadow: isFocused ? '0 0 15px rgba(34,211,238,0.15)' : 'none',
-    fontFamily: 'var(--font-mono, monospace)', boxSizing: 'border-box',
+    background: '#ffffff',
+    border: `1px solid ${isFocused ? 'rgba(16,185,129,0.5)' : 'rgba(0,0,0,0.1)'}`,
+    color: '#0f172a', borderRadius: '6px', fontSize: '14px', outline: 'none',
+    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+    boxShadow: isFocused ? '0 0 0 1px rgba(16,185,129,0.3)' : 'none',
+    fontFamily: 'var(--font-sans)', boxSizing: 'border-box',
+    letterSpacing: '0.02em',
   });
 
   const evalLabels = ['Identity Submitted', 'Evaluating Risk Profile...', 'Awaiting Authorization'];
@@ -331,35 +330,37 @@ function LoginFormWithPasswordCapture({ onSuccess, onMfaRequired, onCriticalDeni
 
   return (
     <div style={{
-      padding: '40px', width: '100%', maxWidth: '440px', margin: '0 auto',
-      background: 'rgba(7,11,20,0.4)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
-      border: '1px solid rgba(34,211,238,0.2)', borderRadius: '16px',
-      boxShadow: '0 20px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05)',
+      padding: '48px 40px', width: '100%', maxWidth: '420px', margin: '0 auto',
+      background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)',
+      border: '1px solid rgba(0,0,0,0.06)', borderRadius: '12px',
+      boxShadow: '0 24px 48px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.8)',
     }}>
-      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+      <div style={{ textAlign: 'center', marginBottom: '40px' }}>
         <div style={{
           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-          width: '48px', height: '48px', borderRadius: '12px',
-          background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.3)',
-          marginBottom: '16px', boxShadow: '0 0 20px rgba(34,211,238,0.2)',
+          width: '40px', height: '40px', borderRadius: '8px',
+          background: '#0f172a',
+          marginBottom: '20px', boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
         }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
         </div>
-        <h2 style={{ color: '#fff', fontSize: '24px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '8px' }}>ASTRA-Q Gateway</h2>
-        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px' }}>Authenticate to access PQC-secured target resources.</p>
+        <h2 style={{ fontFamily: 'var(--font-display)', color: '#0f172a', fontSize: '22px', fontWeight: '500', letterSpacing: '-0.03em', marginBottom: '8px' }}>Astra-Q Gateway</h2>
+        <p style={{ color: 'rgba(0,0,0,0.5)', fontSize: '13px', fontWeight: 400, letterSpacing: '0.01em' }}>Authenticate to access PQC-secured target resources.</p>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         <div>
-          <label style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: '12px', fontWeight: '600', marginBottom: '8px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Operator ID</label>
+          <label style={{ display: 'block', color: 'rgba(0,0,0,0.6)', fontSize: '11px', fontWeight: '600', marginBottom: '10px', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Operator ID</label>
           <input type="text" value={userId} onChange={e => setUserId(e.target.value)}
             onFocus={() => setFocusedInput('user')} onBlur={() => setFocusedInput(null)}
-            style={inputStyle(focusedInput === 'user')} placeholder="USR1771" required />
+            style={inputStyle(focusedInput === 'user')} placeholder="usr_priv_001" required />
         </div>
         <div>
-          <label style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: '12px', fontWeight: '600', marginBottom: '8px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Passphrase</label>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+            <label style={{ color: 'rgba(0,0,0,0.6)', fontSize: '11px', fontWeight: '600', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Passphrase</label>
+          </div>
           <input type="password" value={password} onChange={e => handlePasswordChange(e.target.value)}
             onFocus={() => setFocusedInput('password')} onBlur={() => setFocusedInput(null)}
             style={inputStyle(focusedInput === 'password')} placeholder="••••••••••••" required />
@@ -367,19 +368,19 @@ function LoginFormWithPasswordCapture({ onSuccess, onMfaRequired, onCriticalDeni
 
         {error && (
           <div style={{ color: '#ef4444', fontSize: '13px', background: 'rgba(239,68,68,0.1)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.3)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
             {error}
           </div>
         )}
 
         <button type="submit" disabled={loading} style={{
-          marginTop: '12px', padding: '16px', background: 'linear-gradient(90deg, #22d3ee, #6366f1)',
-          color: '#fff', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '700', letterSpacing: '0.5px',
-          cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.8 : 1,
-          transition: 'all 0.3s ease', boxShadow: '0 4px 15px rgba(34,211,238,0.3)',
+          marginTop: '16px', padding: '14px', background: '#10b981',
+          color: '#ffffff', border: 'none', borderRadius: '6px', fontSize: '13px', fontWeight: '600', letterSpacing: '0.01em',
+          cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
+          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
-          onMouseOver={e => { if (!loading) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(34,211,238,0.4)'; }}}
-          onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(34,211,238,0.3)'; }}
+          onMouseOver={e => { if (!loading) { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(255,255,255,0.15)'; } }}
+          onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
         >
           {loading ? 'ANALYZING RISK METRICS...' : 'INITIATE SECURE SESSION'}
         </button>
@@ -399,7 +400,7 @@ function LoginFormWithPasswordCapture({ onSuccess, onMfaRequired, onCriticalDeni
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     transition: 'all 250ms',
                   }}>
-                    {done && <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#04070d" strokeWidth="3.5"><polyline points="20 6 9 17 4 12"/></svg>}
+                    {done && <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#04070d" strokeWidth="3.5"><polyline points="20 6 9 17 4 12" /></svg>}
                     {active && <div style={{ width: 5, height: 5, borderRadius: '50%', background: stepColors[i], animation: 'eval-pulse 1s infinite' }} />}
                   </div>
                   <span style={{ fontSize: 8, fontFamily: 'JetBrains Mono, monospace', color: done ? '#22c55e' : active ? stepColors[i] : '#4a5568', whiteSpace: 'nowrap' }}>{label}</span>
@@ -411,7 +412,8 @@ function LoginFormWithPasswordCapture({ onSuccess, onMfaRequired, onCriticalDeni
         )}
       </form>
 
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes eval-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }
       `}} />
     </div>

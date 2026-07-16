@@ -26,18 +26,18 @@ function getStatus(stepIdx: number, currentStep: number, alertStep: number | nul
   const n = stepIdx + 1; // 1-based
   if (n === 9 && currentStep >= 9) return 'alert';
   if (n === 10 && currentStep >= 10) return 'amber';
-  if (n === 11 && alertStep === 11)  return 'complete';
-  if (n < currentStep)  return 'complete';
+  if (n === 11 && alertStep === 11) return 'complete';
+  if (n < currentStep) return 'complete';
   if (n === currentStep) return 'active';
   return 'pending';
 }
 
 const STATUS_COLOR: Record<StepStatus, string> = {
-  complete: '#22c55e',
-  active:   '#22d3ee',
-  alert:    '#ef4444',
-  amber:    '#f59e0b',
-  pending:  '#2d3748',
+  complete: '#ffffff',
+  active: '#a1a1aa',
+  alert: '#ff3333',
+  amber: '#ff8800',
+  pending: '#27272a',
 };
 
 export default function WorkflowTracker({ currentStep, alertStep, sessionCount }: Props) {
@@ -61,7 +61,7 @@ export default function WorkflowTracker({ currentStep, alertStep, sessionCount }
 
       {STEPS.map((label, i) => {
         const status = getStatus(i, currentStep, alertStep);
-        const color  = STATUS_COLOR[status];
+        const color = STATUS_COLOR[status];
         const isLast = i === STEPS.length - 1;
 
         return (
@@ -74,9 +74,9 @@ export default function WorkflowTracker({ currentStep, alertStep, sessionCount }
                   width: 18, height: 18, borderRadius: '50%', flexShrink: 0,
                   border: `1.5px solid ${color}`,
                   background: status === 'complete' ? color
-                            : status === 'alert'    ? color
-                            : status === 'amber'    ? color
-                            : 'transparent',
+                    : status === 'alert' ? color
+                      : status === 'amber' ? color
+                        : 'transparent',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   transition: 'all 200ms ease',
                   boxShadow: (status === 'active' || status === 'alert' || status === 'amber')
@@ -85,7 +85,7 @@ export default function WorkflowTracker({ currentStep, alertStep, sessionCount }
                 }}>
                 {status === 'complete' && (
                   <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#04070d" strokeWidth="3.5">
-                    <polyline points="20 6 9 17 4 12"/>
+                    <polyline points="20 6 9 17 4 12" />
                   </svg>
                 )}
               </div>
@@ -104,8 +104,8 @@ export default function WorkflowTracker({ currentStep, alertStep, sessionCount }
               <div style={{
                 width: 18, height: 1, flexShrink: 0,
                 background: status === 'complete' ? 'rgba(34,197,94,0.5)'
-                          : status === 'alert'    ? 'rgba(239,68,68,0.5)'
-                          : 'rgba(255,255,255,0.06)',
+                  : status === 'alert' ? 'rgba(239,68,68,0.5)'
+                    : 'rgba(255,255,255,0.06)',
                 transition: 'background 300ms', margin: '0 1px 14px',
               }} />
             )}

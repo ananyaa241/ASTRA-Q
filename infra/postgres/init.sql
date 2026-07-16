@@ -1,5 +1,5 @@
 -- ============================================================
--- Project Aegis-Q: PostgreSQL Schema
+-- Project Astra-Q: PostgreSQL Schema
 -- ============================================================
 
 -- Extensions
@@ -175,3 +175,4 @@ INSERT INTO ingestion_checkpoints (source_file, last_offset) VALUES
     ('file.csv', 0),
     ('http.csv', 0)
 ON CONFLICT DO NOTHING;
+

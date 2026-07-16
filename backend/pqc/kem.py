@@ -1,5 +1,5 @@
 """
-Aegis-Q PQC: ML-KEM-1024 Key Encapsulation
+Astra-Q PQC: ML-KEM-1024 Key Encapsulation
 =============================================
 Implements FIPS 203 ML-KEM-1024 (Module Lattice Key Encapsulation Mechanism)
 for post-quantum secure transport key derivation.
@@ -71,7 +71,7 @@ class EncapsulationResult:
     def derive_aes_key(self) -> bytes:
         """Derive 32-byte AES-256 key from shared secret via HKDF-SHA3-256."""
         return hashlib.sha3_256(
-            b"aegis-q-kem-aes-" + self.shared_secret
+            b"Astra-Q-kem-aes-" + self.shared_secret
         ).digest()
 
 
@@ -206,3 +206,4 @@ def get_kem() -> MLKEM1024:
     if _kem_instance is None:
         _kem_instance = MLKEM1024()
     return _kem_instance
+
