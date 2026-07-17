@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>🛡️ Astra-Q: Advanced Security Threat Response Architecture – Quantum</h1>
+  <h1> Astra-Q: Advanced Security Threat Response Architecture – Quantum</h1>
   <p>
     <strong>Enterprise-grade continuous trust intelligence and insider threat detection platform</strong><br>
     <em>Designed for modern, high-security ecosystems (e.g., Next-Gen Banking, Aerospace)</em>
@@ -10,7 +10,7 @@ Instead of relying on static-perimeter security, Astra-Q continuously evaluates 
 
 ---
 
-## 🚀 Tech Stack
+##  Tech Stack
 
 - **Frontend Framework**: Next.js 14, React 18
 - **Styling & UI**: Tailwind CSS, Framer Motion, Recharts
@@ -23,14 +23,6 @@ Instead of relying on static-perimeter security, Astra-Q continuously evaluates 
 - **Infrastructure**: Docker / Docker Compose
 
 ---
-
-## 🏗️ Technical Architecture
-
-<div align="center">
-  <img src="astra_q_detailed_architecture_diagram_1784231669749.png" alt="Astra-Q Technical Architecture" style="max-width: 100%; height: auto;" />
-</div>
-
-<br/>
 
 Astra-Q employs an ultra-scalable, service-oriented architecture bridging real-time event streaming, Artificial Intelligence, and cryptographic resilience. 
 
